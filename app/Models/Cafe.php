@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Cafe extends Model
 {
@@ -22,12 +24,12 @@ class Cafe extends Model
         'uuid'
     ];
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function cafe_managements()
+    public function cafe_managements(): HasMany
     {
         return $this->hasMany(CafeManagement::class);
     }

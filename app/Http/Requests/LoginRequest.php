@@ -2,14 +2,12 @@
 
 namespace App\Http\Requests;
 
-use App\Traits\ApiResponser;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class LoginRequest extends FormRequest
 {
-    use ApiResponser;
-
     public function authorize(): bool
     {
         return true;
@@ -35,6 +33,8 @@ class LoginRequest extends FormRequest
 
     public function failedValidation(Validator $validator)
     {
-        return $this->errorResponse($validator->errors(), 'Validation Error.', 422);
+        throw new HttpResponseException(
+            $this->errorResponse($validator->errors(), 'Validation Error.', 422)
+        );
     }
 }
