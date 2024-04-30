@@ -6,6 +6,8 @@ use App\Models;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use App\Notifications;
+use Illuminate\Support\Facades\Notification;
 
 class UserService
 {
@@ -254,7 +256,7 @@ class UserService
 
                     $url = $url_ . '/verify/owner?uuid=' . $uuid . '&email=' . $user->email;
                     $cafeID = $cafe->id;
-                    //Notification::send($user, new UserVerifyEmail($user, ['url' => $url]));
+                    Notification::send($user, new Notifications\UserVerifyEmail($user, ['url' => $url]));
                     break;
                 case 'stan':
                     // Save Data Stan
@@ -267,19 +269,19 @@ class UserService
 
                     $stanID = $stan->id;
                     $message = ' Pemilik Stan ' . $datas['name_stan'];
-                    //Notification::send($user, new OwnerSendEmail($user, ['message' => $message, 'url' => $url]));
+                    Notification::send($user, new Notifications\OwnerSendEmail($user, ['message' => $message, 'url' => $url]));
                     break;
                 case 'manager':
                     $message = ' Manager';
-                    //Notification::send($user, new OwnerSendEmail($user, ['message' => $message, 'url' => $url]));
+                    Notification::send($user, new Notifications\OwnerSendEmail($user, ['message' => $message, 'url' => $url]));
                     break;
                 case 'kasir':
                     $message = ' Kasir';
-                    //Notification::send($user, new OwnerSendEmail($user, ['message' => $message, 'url' => $url]));
+                    Notification::send($user, new Notifications\OwnerSendEmail($user, ['message' => $message, 'url' => $url]));
                     break;
                 case 'pelayan':
                     $message = ' Pelayan';
-                    //Notification::send($user, new OwnerSendEmail($user, ['message' => $message, 'url' => $url]));
+                    Notification::send($user, new Notifications\OwnerSendEmail($user, ['message' => $message, 'url' => $url]));
                     break;
             }
 
