@@ -36,6 +36,105 @@ class UserService
         ];
     }
 
+    public function getUserByID($id, $ket = '', $datas = [])
+    {
+        $status = true;
+        $code = 200;
+        $result = null;
+        try {
+            switch ($ket) {
+                case 'uuid':
+                    $message = "Get User By UUID";
+                    $result = Models\User::where('uuid', $id)->first();
+                    break;
+
+                case 'verified':
+                    $message = "Email dapat di verifikasi dan segera ganti Password Anda, terimakasih";
+                    $result = Models\User::where(['uuid' => $id, 'email' => $datas['email']])->first();
+                    if ($result) {
+                        if ($result->is_active == true) {
+                            $status = false;
+                            $message = "Email Sudah Aktif";
+                        }
+                    } else {
+                        $status = false;
+                        $code = 404;
+                        $message = 'Data Email tidak Ditemukan...';
+                    }
+                    break;
+
+                default:
+                    $result = Models\User::findOrFail($id);
+                    $message = "Get User By ID";
+                    break;
+            }
+        } catch (\Throwable $e) {
+            $status = false;
+            $code = $e->getCode();
+            $message = $e->getMessage();
+            $result = [
+                'get_file' => $e->getFile(),
+                'get_line' => $e->getLine()
+            ];
+        }
+
+        return [
+            'code' => $code,
+            'status' => $status,
+            'message' => $message,
+            'result' => $result
+        ];
+    }
+
+    public function userVerifyEmail($request)
+    {
+        $status = false;
+        $code = 200;
+        $result = null;
+        try {
+            // Check Data
+            $user = Models\User::where([
+                "email" => $request->email,
+                "uuid" => $request->uuid,
+                "email_verified_at" => null,
+            ]);
+
+            $check = $user->first();
+            if ($check) {
+                $update = [
+                    'email_verified_at' => date('Y-m-d H:i:s'),
+                    'is_active' => true
+                ];
+                if ($request->password) $update += ['password' => bcrypt($request->password)];
+                $user->update($update);
+
+                Models\Cafe::where('user_id', $check->id)->update(['status' => true]);
+                Models\CafeManagement::where('user_id', $check->id)->update(['status' => true]);
+                $status = true;
+                $result = true;
+                $message = 'Successfully Verify Email User';
+            } else {
+                $code = 404;
+                $message = 'Data Email tidak Ditemukan...';
+            }
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            $code = $e->getCode();
+            $message = $e->getMessage();
+            $result = [
+                'get_file' => $e->getFile(),
+                'get_line' => $e->getLine()
+            ];
+        }
+
+        return [
+            'code' => $code,
+            'status' => $status,
+            'message' => $message,
+            'result' => $result
+        ];
+    }
+
     public function userLogin($request)
     {
         $status = false;

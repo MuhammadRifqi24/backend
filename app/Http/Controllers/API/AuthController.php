@@ -34,6 +34,33 @@ class AuthController extends Controller
         return $this->successResponse($result['result'], $result['message'], $result['code']);
     }
 
+    public function getVerifyEmail(Request $request): JsonResponse
+    {
+        $result = $this->userService->getUserByID($request->uuid, 'verified', ['email' => $request->email]);
+        if ($result['status'] == false) {
+            return $this->errorResponse($result['result'], $result['message'], $result['code']);
+        }
+        return $this->successResponse($result['result'], $result['message'], $result['code']);
+    }
+
+    public function verifyEmail(Requests\VerifyEmailRequest $request): JsonResponse
+    {
+        $result = $this->userService->userVerifyEmail($request);
+        if ($result['status'] == false) {
+            return $this->errorResponse($result['result'], $result['message'], $result['code']);
+        }
+        return $this->successResponse($result['result'], $result['message'], $result['code']);
+    }
+
+    public function verifyEmailOwner(Requests\VerifyEmailOwnerRequest $request): JsonResponse
+    {
+        $result = $this->userService->userVerifyEmail($request);
+        if ($result['status'] == false) {
+            return $this->errorResponse($result['result'], $result['message'], $result['code']);
+        }
+        return $this->successResponse($result['result'], $result['message'], $result['code']);
+    }
+
     public function destroy(): JsonResponse
     {
         $result = $this->userService->userLogout();
