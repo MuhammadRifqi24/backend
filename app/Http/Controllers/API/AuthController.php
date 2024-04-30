@@ -3,26 +3,34 @@
 namespace App\Http\Controllers\API;
 
 use Illuminate\Http\Request;
-use App\Services\UserService;
+use App\Services;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\API\BaseController as Controller;
-use App\Http\Requests\LoginRequest;
+use App\Http\Requests;
 
 class AuthController extends Controller
 {
     protected $userService;
-    public function __construct(UserService $userService)
+    public function __construct(Services\UserService $userService)
     {
         $this->userService = $userService;
     }
 
-    public function login(LoginRequest $request): JsonResponse
+    public function profile(): JsonResponse
+    {
+        $result = $this->userService->userProfile();
+        if ($result['status'] == false) {
+            return $this->errorResponse($result['result'], $result['message'], $result['code']);
+        }
+        return $this->successResponse($result['result'], $result['message'], $result['code']);
+    }
+
+    public function login(Requests\LoginRequest $request): JsonResponse
     {
         $result = $this->userService->userLogin($request);
         if ($result['status'] == false) {
             return $this->errorResponse($result['result'], $result['message'], $result['code']);
         }
-
         return $this->successResponse($result['result'], $result['message'], $result['code']);
     }
 
@@ -32,7 +40,6 @@ class AuthController extends Controller
         if ($result['status'] == false) {
             return $this->errorResponse($result['result'], $result['message'], $result['code']);
         }
-
         return $this->successResponse($result['result'], $result['message'], $result['code']);
     }
 }

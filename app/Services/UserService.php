@@ -2,11 +2,40 @@
 
 namespace App\Services;
 
-use App\Models\User;
+use App\Models;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
 class UserService
 {
+    public function userProfile()
+    {
+        $status = false;
+        $code = 200;
+        $result = null;
+        try {
+            $message = "Get data Profile";
+            $auth = Auth::user();
+            $result = Models\User::with('user_level')->findOrFail($auth->id);
+            $status = true;
+        } catch (\Throwable $e) {
+            $code = $e->getCode();
+            $message = $e->getMessage();
+            $result = [
+                'get_file' => $e->getFile(),
+                'get_line' => $e->getLine()
+            ];
+        }
+
+        return [
+            'code' => $code,
+            'status' => $status,
+            'message' => $message,
+            'result' => $result
+        ];
+    }
+
     public function userLogin($request)
     {
         $status = false;
@@ -15,7 +44,7 @@ class UserService
         try {
             if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
                 $user = Auth::user();
-                $getUser = User::with('user_level')->findOrFail($user->id);
+                $getUser = Models\User::with('user_level')->findOrFail($user->id);
                 $result['token'] = $this->createToken($user);
                 $result['user'] = $getUser;
                 $message = 'Succesfully User Login';
@@ -76,5 +105,116 @@ class UserService
     private function deleteToken($user)
     {
         return $user->tokens()->delete();
+    }
+
+    public function userRegister($datas, $level)
+    {
+        $status = false;
+        $code = 200;
+        $result = [];
+        DB::beginTransaction();
+        try {
+            $uuid = Str::uuid()->getHex()->toString();
+            $password = isset($datas['password']) ? $datas['password'] : "password";
+
+            $checkUser = Models\User::where('email', $datas['email'])->first();
+            if ($checkUser) {
+                $user = $checkUser;
+            } else {
+                //Save Data User
+                $user = new Models\User();
+                $user->name = $datas['name'];
+                $user->email = $datas['email'];
+                $user->password = bcrypt($password);
+                // $user->email_verified_at = now();
+                $user->uuid = $uuid;
+                $user->save();
+            }
+
+            $cafeID = isset($datas['cafe_id']) ? $datas['cafe_id'] : null;
+            $stanID = isset($datas['stan_id']) ? $datas['stan_id'] : null;
+
+            // Save Data UserLevel
+            $userLevel = new Models\UserLevel();
+            $userLevel->user_id = $user->id;
+            $userLevel->level = $level;
+            $userLevel->role = $datas['role'];
+            $userLevel->save();
+
+            $url_ = env('URL_FE', 'https://cafe.markazvirtual.com');
+            $url = $url_ . '/verify?uuid=' . $uuid . '&email=' . $user->email;
+
+            switch ($datas['role']) {
+                case 'owner':
+                    //Save Data Cafe
+                    $cafe = new Models\Cafe();
+                    $cafe->user_id = $user->id;
+                    $cafe->name = $datas['name_cafe'];
+                    $cafe->uuid = $uuid;
+                    $cafe->save();
+
+                    $url = $url_ . '/verify/owner?uuid=' . $uuid . '&email=' . $user->email;
+                    $cafeID = $cafe->id;
+                    //Notification::send($user, new UserVerifyEmail($user, ['url' => $url]));
+                    break;
+                case 'stan':
+                    // Save Data Stan
+                    $stan = new Models\Stan();
+                    $stan->user_id = $user->id;
+                    $stan->cafe_id = $cafeID;
+                    $stan->name = $datas['name_stan'];
+                    $stan->uuid = $uuid;
+                    $stan->save();
+
+                    $stanID = $stan->id;
+                    $message = ' Pemilik Stan ' . $datas['name_stan'];
+                    //Notification::send($user, new OwnerSendEmail($user, ['message' => $message, 'url' => $url]));
+                    break;
+                case 'manager':
+                    $message = ' Manager';
+                    //Notification::send($user, new OwnerSendEmail($user, ['message' => $message, 'url' => $url]));
+                    break;
+                case 'kasir':
+                    $message = ' Kasir';
+                    //Notification::send($user, new OwnerSendEmail($user, ['message' => $message, 'url' => $url]));
+                    break;
+                case 'pelayan':
+                    $message = ' Pelayan';
+                    //Notification::send($user, new OwnerSendEmail($user, ['message' => $message, 'url' => $url]));
+                    break;
+            }
+
+            if ($level === "management") {
+                //Save Data CafeManagement
+                $cafeManagement = new Models\CafeManagement();
+                $cafeManagement->cafe_id = $cafeID;
+                $cafeManagement->stan_id = $stanID;
+                $cafeManagement->user_id = $user->id;
+                $cafeManagement->userlevel_id = $userLevel->id;
+                $cafeManagement->save();
+            }
+
+            $result = $user;
+            $code = 201;
+
+            $status = true;
+            $message = 'Successfully Register User';
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            $code = $e->getCode();
+            $message = $e->getMessage();
+            $result = [
+                'get_file' => $e->getFile(),
+                'get_line' => $e->getLine()
+            ];
+        }
+
+        return [
+            'code' => $code,
+            'status' => $status,
+            'message' => $message,
+            'result' => $result
+        ];
     }
 }
