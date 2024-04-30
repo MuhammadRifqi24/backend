@@ -20,7 +20,6 @@ class RegisterController extends Controller
 
     public function registerOwner(Requests\RegisterOwnerRequest $request): JsonResponse
     {
-        // return $this->successResponse($request->all(), 'testing');
         $result = $this->userService->userRegister([
             'name' => $request->name,
             'name_cafe' => $request->name_cafe,
