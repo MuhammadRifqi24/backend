@@ -33,4 +33,26 @@ class RegisterController extends Controller
         }
         return $this->successResponse($result['result'], $result['message'], $result['code']);
     }
+
+    public function registerManager(Requests\RegisterManagerRequest $request): JsonResponse
+    {
+        $auth = auth()->user();
+        $user = $this->cafeService->getCafe($auth->id, 'user_id');
+
+        if ($user['status'] == false) {
+            return $this->errorResponse($user['message'], $user['result'], $user['code']);
+        }
+
+        $result = $this->userService->userRegister([
+            'name' => $request->name,
+            'email' => $request->email,
+            'role' => 'manager',
+            'cafe_id' => $user['result']->id,
+        ], "management");
+
+        if ($result['status'] == false) {
+            return $this->errorResponse($result['message'], $result['result'], $result['code']);
+        }
+        return $this->successResponse($result['result'], $result['message'], $result['code']);
+    }
 }

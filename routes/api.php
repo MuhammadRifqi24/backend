@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\API;
-use App\Http\Middleware;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -16,7 +15,9 @@ Route::get('auth/verify-email', [API\AuthController::class, 'getVerifyEmail']);
 Route::post('auth/verify-email', [API\AuthController::class, 'verifyEmail']);
 Route::post('auth/verify-email-owner', [API\AuthController::class, 'verifyEmailOwner']);
 
-Route::middleware(['auth:sanctum', Middleware\CheckVerifyEmail::class])->group(function () {
+Route::middleware(['auth:sanctum', 'checkVerifyEmail'])->group(function () {
     Route::get('auth/profile', [API\AuthController::class, 'profile']);
-    Route::post('auth/logout', [API\AuthController::class, 'destroy'])->withoutMiddleware(Middleware\CheckVerifyEmail::class);
+    Route::post('auth/logout', [API\AuthController::class, 'destroy'])->withoutMiddleware('checkVerifyEmail');
+
+    Route::post('auth/register-manager', [API\RegisterController::class, 'registerManager'])->middleware('checkRole:owner');
 });
