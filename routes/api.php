@@ -20,4 +20,8 @@ Route::middleware(['auth:sanctum', 'checkVerifyEmail'])->group(function () {
     Route::post('auth/logout', [API\AuthController::class, 'destroy'])->withoutMiddleware('checkVerifyEmail');
 
     Route::post('auth/register-manager', [API\RegisterController::class, 'registerManager'])->middleware('checkRole:owner');
+    Route::post('auth/register-kasir', [API\RegisterController::class, 'registerKasir'])->middleware('checkRole:owner');
+    Route::post('auth/register-pelayan', [API\RegisterController::class, 'registerPelayan'])->middleware('checkRole:owner');
+    Route::post('auth/register-dapur', [API\RegisterController::class, 'registerDapur'])->middleware('checkRole:owner');
+    Route::post('auth/register-stan', [API\RegisterController::class, 'registerStan'])->middleware('checkRole:owner,admin');
 });

@@ -38,9 +38,8 @@ class RegisterController extends Controller
     {
         $auth = auth()->user();
         $user = $this->cafeService->getCafe($auth->id, 'user_id');
-
         if ($user['status'] == false) {
-            return $this->errorResponse($user['message'], $user['result'], $user['code']);
+            return $this->errorResponse($user['result'], $user['message'], $user['code']);
         }
 
         $result = $this->userService->userRegister([
@@ -51,7 +50,94 @@ class RegisterController extends Controller
         ], "management");
 
         if ($result['status'] == false) {
-            return $this->errorResponse($result['message'], $result['result'], $result['code']);
+            return $this->errorResponse($result['result'], $result['message'], $result['code']);
+        }
+        return $this->successResponse($result['result'], $result['message'], $result['code']);
+    }
+
+    public function registerKasir(Requests\RegisterKasirRequest $request): JsonResponse
+    {
+        $auth = auth()->user();
+        $user = $this->cafeService->getCafe($auth->id, 'user_id');
+        if ($user['status'] == false) {
+            return $this->errorResponse($user['result'], $user['message'], $user['code']);
+        }
+
+        $result = $this->userService->userRegister([
+            'name' => $request->name,
+            'email' => $request->email,
+            'role' => 'kasir',
+            'cafe_id' => $user['result']->id,
+        ], "management");
+
+        if ($result['status'] == false) {
+            return $this->errorResponse($result['result'], $result['message'], $result['code']);
+        }
+        return $this->successResponse($result['result'], $result['message'], $result['code']);
+    }
+
+    public function registerPelayan(Requests\RegisterPelayanRequest $request): JsonResponse
+    {
+        $auth = auth()->user();
+        $user = $this->cafeService->getCafe($auth->id, 'user_id');
+        if ($user['status'] == false) {
+            return $this->errorResponse($user['result'], $user['message'], $user['code']);
+        }
+
+        $result = $this->userService->userRegister([
+            'name' => $request->name,
+            'email' => $request->email,
+            'role' => 'pelayan',
+            'cafe_id' => $user['result']->id,
+        ], "management");
+
+        if ($result['status'] == false) {
+            return $this->errorResponse($result['result'], $result['message'], $result['code']);
+        }
+        return $this->successResponse($result['result'], $result['message'], $result['code']);
+    }
+
+    public function registerDapur(Requests\RegisterDapurRequest $request): JsonResponse
+    {
+        $auth = auth()->user();
+        $user = $this->cafeService->getCafe($auth->id, 'user_id');
+        if ($user['status'] == false) {
+            return $this->errorResponse($user['result'], $user['message'], $user['code']);
+        }
+
+        $result = $this->userService->userRegister([
+            'name' => $request->name,
+            'email' => $request->email,
+            'role' => 'dapur',
+            'cafe_id' => $user['result']->id,
+        ], "management");
+
+        if ($result['status'] == false) {
+            return $this->errorResponse($result['result'], $result['message'], $result['code']);
+        }
+        return $this->successResponse($result['result'], $result['message'], $result['code']);
+    }
+
+    public function registerStan(Requests\RegisterStanRequest $request): JsonResponse
+    {
+        $auth = auth()->user();
+        $user = $this->cafeService->getCafe($auth->id, 'user_id');
+        if ($user['status'] == false) {
+            return $this->errorResponse($user['result'], $user['message'], $user['code']);
+        }
+
+        $result = $this->userService->userRegister([
+            'name' => $request->name,
+            'name_stan' => $request->name_stan,
+            'email' => $request->email,
+            'role' => 'stan',
+            'cafe_id' => $user['result']->id,
+        ], "management");
+
+        return $this->successResponse($result, "testing");
+
+        if ($result['status'] == false) {
+            return $this->errorResponse($result['result'], $result['message'], $result['code']);
         }
         return $this->successResponse($result['result'], $result['message'], $result['code']);
     }
