@@ -18,7 +18,7 @@ class Category extends Model
         'uuid'
     ];
 
-    public function scopeIsActive($query, $status = 1): void
+    public function scopeIsActive($query, $status = 1)
     {
         return $query->where('status', $status);
     }

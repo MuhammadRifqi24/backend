@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\Product;
+use App\Models;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 
@@ -16,15 +16,22 @@ class ProductService
         try {
             $message = "Get data Product";
             switch ($ket) {
-                case 'user_id':
-                    $result = Product::with('stock', 'category:id,name')->where('user_id', $id)->get();
+                case 'cafe_id':
+                    $cafeManagement = Models\CafeManagement::select('id,user_id,cafe_id')->where(['user_id' => $id, 'status' => true])->first();
+                    if ($cafeManagement) {
+                        $message .= ' by CafeId';
+                        $result = Models\Product::with('stock', 'category:id,name', 'stan:id,name,logo')->where('cafe_id', $cafeManagement->cafe_id)->get();
+                    } else {
+                        $code = 404;
+                        $message = 'Data Not Found';
+                    }
                     break;
                 case 'uuid':
-                    $result = Product::with('stock', 'category:id,name')->where('uuid', $id)->first();
+                    $result = Models\Product::with('stock', 'category:id,name')->where('uuid', $id)->first();
                     break;
 
                 default:
-                    $result = Product::findOrFail($id);
+                    $result = Models\Product::findOrFail($id);
                     break;
             }
 
@@ -55,7 +62,7 @@ class ProductService
         try {
             $uuid = Str::uuid()->getHex()->toString();
 
-            $product = new Product();
+            $product = new Models\Product();
             $product->cafe_id = $datas['cafe_id'];
             $product->stan_id = isset($datas['stan_id']) ? $datas['stan_id'] : null;
             $product->category_id = $datas['category_id'];
@@ -113,7 +120,7 @@ class ProductService
         $result = null;
         DB::beginTransaction();
         try {
-            $product = Product::findOrFail($product_id);
+            $product = Models\Product::findOrFail($product_id);
             $product->category_id = $datas['category_id'];
             $product->name  = $datas['name'];
             $product->image = $datas['image'];
@@ -152,7 +159,7 @@ class ProductService
         $result = null;
         $message = '';
         try {
-            $product = Product::where(['uuid' => $uuid, 'user_id' => $user_id])->first();
+            $product = Models\Product::where(['uuid' => $uuid, 'user_id' => $user_id])->first();
             if ($product) {
                 $cekimage = public_path('/images/product/' . $product->image);
                 if (file_exists($cekimage)) unlink($cekimage);
