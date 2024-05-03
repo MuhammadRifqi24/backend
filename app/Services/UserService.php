@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models;
+use App\Models\UserLevel;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -212,7 +213,7 @@ class UserService
     {
         $status = false;
         $code = 200;
-        $result = [];
+        $result = null;
         DB::beginTransaction();
         try {
             $uuid = Str::uuid()->getHex()->toString();
@@ -222,12 +223,12 @@ class UserService
             if ($checkUser) {
                 $user = $checkUser;
             } else {
-                //Save Data User
+                //* Save Data User
                 $user = new Models\User();
                 $user->name = $datas['name'];
                 $user->email = $datas['email'];
                 $user->password = bcrypt($password);
-                // $user->email_verified_at = now();
+                //! $user->email_verified_at = now();
                 $user->uuid = $uuid;
                 $user->save();
             }
@@ -235,19 +236,22 @@ class UserService
             $cafeID = isset($datas['cafe_id']) ? $datas['cafe_id'] : null;
             $stanID = isset($datas['stan_id']) ? $datas['stan_id'] : null;
 
-            // Save Data UserLevel
-            $userLevel = new Models\UserLevel();
-            $userLevel->user_id = $user->id;
-            $userLevel->level = $level;
-            $userLevel->role = $datas['role'];
-            $userLevel->save();
+            //* Save Data UserLevel
+            $userLevel = Models\UserLevel::where(['user_id' => $user->id, 'level' => $level, 'role' => $datas['role']])->first();
+            if (!$userLevel) {
+                $userLevel = new Models\UserLevel();
+                $userLevel->user_id = $user->id;
+                $userLevel->level = $level;
+                $userLevel->role = $datas['role'];
+                $userLevel->save();
+            }
 
             $url_ = env('URL_FE', 'https://cafe.markazvirtual.com');
             $url = $url_ . '/verify?uuid=' . $uuid . '&email=' . $user->email;
 
             switch ($datas['role']) {
                 case 'owner':
-                    //Save Data Cafe
+                    //* Save Data Cafe
                     $cafe = new Models\Cafe();
                     $cafe->user_id = $user->id;
                     $cafe->name = $datas['name_cafe'];
@@ -259,7 +263,7 @@ class UserService
                     Notification::send($user, new Notifications\UserVerifyEmail($user, ['url' => $url]));
                     break;
                 case 'stan':
-                    // Save Data Stan
+                    //* Save Data Stan
                     $stan = new Models\Stan();
                     $stan->user_id = $user->id;
                     $stan->cafe_id = $cafeID;
@@ -286,13 +290,16 @@ class UserService
             }
 
             if ($level === "management") {
-                //Save Data CafeManagement
-                $cafeManagement = new Models\CafeManagement();
-                $cafeManagement->cafe_id = $cafeID;
-                $cafeManagement->stan_id = $stanID;
-                $cafeManagement->user_id = $user->id;
-                $cafeManagement->userlevel_id = $userLevel->id;
-                $cafeManagement->save();
+                //* Save Data CafeManagement
+                $cafeManagement = Models\CafeManagement::where(['cafe_id' => $cafeID, 'user_id' => $user->id, 'userlevel_id' => $userLevel->id])->first();
+                if (!$cafeManagement) {
+                    $cafeManagement = new Models\CafeManagement();
+                    $cafeManagement->cafe_id = $cafeID;
+                    $cafeManagement->stan_id = $stanID;
+                    $cafeManagement->user_id = $user->id;
+                    $cafeManagement->userlevel_id = $userLevel->id;
+                    $cafeManagement->save();
+                }
             }
 
             $result = $user;
