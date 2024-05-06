@@ -15,7 +15,7 @@ class StockService
         try {
             $check = Models\Stock::where('product_id', $product_id);
             if ($check->count() > 0) {
-                $stock = Models\Stock::findOrFail($check->first()->id);
+                $stock = $check->first();
             } else {
                 $stock = new Models\Stock();
                 $stock->product_id = $product_id;
