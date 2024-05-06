@@ -17,7 +17,7 @@ class ProductService
             $message = "Get data Product";
             switch ($ket) {
                 case 'cafe_id':
-                    $cafeManagement = Models\CafeManagement::select('id,user_id,cafe_id')->where(['user_id' => $id, 'status' => true])->first();
+                    $cafeManagement = Models\CafeManagement::select('id', 'user_id', 'cafe_id')->where(['user_id' => $id, 'status' => true])->first();
                     if ($cafeManagement) {
                         $message .= ' by CafeId';
                         $result = Models\Product::with('stock', 'category:id,name', 'stan:id,name,logo')->where('cafe_id', $cafeManagement->cafe_id)->get();

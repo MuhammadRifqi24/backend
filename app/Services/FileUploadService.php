@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use Intervention\Image\Laravel\Facades\Image;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
 
 class FileUploadService
 {
@@ -10,6 +12,7 @@ class FileUploadService
     {
         $result = [];
         try {
+            $manager = new ImageManager(new Driver());
             if ($update != null) {
                 $cekimage = public_path('images/product/' . $update);
                 if (file_exists($cekimage)) unlink($cekimage);
@@ -18,7 +21,7 @@ class FileUploadService
             }
             $image = $file->move(public_path() . '/images/product/temp/', $name);
             //resize image aspect ratio
-            $original = Image::make($image);
+            $original = $manager->read($image);
             if ($original->width() > 800) {
                 $original->resize(800, 800, function ($constraint) {
                     $constraint->aspectRatio();
@@ -26,7 +29,7 @@ class FileUploadService
             }
             $ori = $original->save(public_path('images/product/' . $name));
 
-            $thumbnail = Image::make($image);
+            $thumbnail = $manager->read($image);
             if ($thumbnail->width() > 250) {
                 $thumbnail->resize(250, 250, function ($constraint) {
                     $constraint->aspectRatio();
