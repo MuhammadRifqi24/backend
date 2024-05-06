@@ -14,4 +14,6 @@ Route::get('/', function () {
 Route::middleware(['auth:sanctum', 'checkVerifyEmail', 'checkRole:manager,owner'])->group(function () {
     Route::get('product/index', [Manager\ProductController::class, 'index']);
     Route::post('product/insert', [Manager\ProductController::class, 'insert']);
+    Route::post('product/update', [Manager\ProductController::class, 'update']);
+    Route::delete('product/delete', [Manager\ProductController::class, 'destroy']);
 });

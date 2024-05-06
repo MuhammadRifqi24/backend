@@ -152,14 +152,14 @@ class ProductService
         ];
     }
 
-    public function deleteData($uuid, $user_id)
+    public function deleteData($uuid)
     {
         $status = false;
         $code = 200;
         $result = null;
         $message = '';
         try {
-            $product = Models\Product::where(['uuid' => $uuid, 'user_id' => $user_id])->first();
+            $product = Models\Product::where('uuid', $uuid)->first();
             if ($product) {
                 $cekimage = public_path('/images/product/' . $product->image);
                 if (file_exists($cekimage)) unlink($cekimage);
@@ -167,6 +167,7 @@ class ProductService
                 if (file_exists($cekimage2)) unlink($cekimage2);
                 $product->delete();
                 $status = true;
+                $result = true;
                 $message = 'Successfully delete Product';
             } else {
                 $code = 404;

@@ -23,17 +23,13 @@ class FileUploadService
             //resize image aspect ratio
             $original = $manager->read($image);
             if ($original->width() > 800) {
-                $original->resize(800, 800, function ($constraint) {
-                    $constraint->aspectRatio();
-                });
+                $original->scale(800, 800);
             }
             $ori = $original->save(public_path('images/product/' . $name));
 
             $thumbnail = $manager->read($image);
             if ($thumbnail->width() > 250) {
-                $thumbnail->resize(250, 250, function ($constraint) {
-                    $constraint->aspectRatio();
-                });
+                $thumbnail->scale(250, 250);
             }
             $thumb = $thumbnail->save(public_path('images/product/thumbnail/' . $name));
 

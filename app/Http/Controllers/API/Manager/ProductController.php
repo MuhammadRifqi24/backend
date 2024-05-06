@@ -70,4 +70,53 @@ class ProductController extends Controller
         }
         return $this->successResponse($result['result'], $result['message'], $result['code']);
     }
+
+    public function update(Requests\Manager\UpdateProductRequest $request): JsonResponse
+    {
+        $checkData = $this->productService->getDataByID($request->uuid, 'uuid');
+        if ($checkData['status'] == false) {
+            return $this->errorResponse($checkData['message'], $checkData['result'], $checkData['code']);
+        }
+        $checkData = $checkData['result'];
+
+        $auth = $request->user();
+        $name_image = $checkData->image;
+        if ($request->hasfile('image')) {
+            $file = $request->file('image');
+            $name_image = $checkData->cafe_id . '-product-' . $auth->id . '-' . time() . '.' . $file->getClientOriginalExtension();
+            $upload = FUS::uploadProduct($file, $name_image, $checkData->image);
+            if ($upload['status'] === false) {
+                return $this->errorResponse($upload['result'], "Gagal Upload", 500);
+            }
+        }
+
+        $result = $this->productService->updateData([
+            'category_id' => $request->category_id,
+            'name' => $request->name,
+            'image' => $name_image,
+            'description' => $request->description,
+            'harga_beli' => $request->harga_beli,
+            'harga_jual' => $request->harga_jual,
+            'status' => $request->status
+        ], $checkData->id);
+
+        if ($result['status'] == false) {
+            return $this->errorResponse($result['result'], $result['message'], $result['code']);
+        }
+        return $this->successResponse($result['result'], $result['message'], $result['code']);
+    }
+
+    public function destroy(Requests\Manager\DeleteProductRequest $request): JsonResponse
+    {
+        $checkData = $this->productService->getDataByID($request->uuid, 'uuid');
+        if ($checkData['status'] == false) {
+            return $this->errorResponse($checkData['result'], $checkData['message'], $checkData['code']);
+        }
+
+        $result = $this->productService->deleteData($request->uuid);
+        if ($result['status'] == false) {
+            return $this->errorResponse($result['result'], $result['message'], $result['code']);
+        }
+        return $this->successResponse($result['result'], $result['message'], $result['code']);
+    }
 }
