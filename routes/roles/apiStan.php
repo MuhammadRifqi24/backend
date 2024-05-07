@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\API\Stan;
 
 // * {BASE_URL}/api/v1/stan
 Route::get('/', function () {
@@ -10,6 +11,6 @@ Route::get('/', function () {
     ]);
 });
 
-/* Route::middleware(['auth:sanctum', 'checkVerifyEmail', 'checkRole:stan'])->group(function () {
-    //
-}); */
+Route::middleware(['auth:sanctum', 'checkVerifyEmail', 'checkRole:stan'])->group(function () {
+    Route::get('product/index', [Stan\ProductController::class, 'index']);
+});
