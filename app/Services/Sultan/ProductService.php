@@ -159,4 +159,42 @@ class ProductService
             'result' => $result
         ];
     }
+
+    public function deleteData($uuid)
+    {
+        $status = false;
+        $code = 200;
+        $result = null;
+        $message = '';
+        try {
+            $product = Models\Product::where('uuid', $uuid)->first();
+            if ($product) {
+                $cekimage = public_path('/images/product/' . $product->image);
+                if (file_exists($cekimage)) unlink($cekimage);
+                $cekimage2 = public_path('/images/product/thumbnail/' . $product->image);
+                if (file_exists($cekimage2)) unlink($cekimage2);
+                $product->delete();
+                $status = true;
+                $result = true;
+                $message = 'Successfully delete Product';
+            } else {
+                $code = 404;
+                $message = 'Data tidak ditemukan';
+            }
+        } catch (\Throwable $e) {
+            $code = $e->getCode();
+            $message = $e->getMessage();
+            $result = [
+                'get_file' => $e->getFile(),
+                'get_line' => $e->getLine()
+            ];
+        }
+
+        return [
+            'code' => $code,
+            'status' => $status,
+            'message' => $message,
+            'result' => $result
+        ];
+    }
 }

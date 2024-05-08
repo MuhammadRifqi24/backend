@@ -106,4 +106,18 @@ class ProductController extends Controller
         }
         return $this->successResponse($result['result'], $result['message'], $result['code']);
     }
+
+    public function destroy(Requests\Stan\DeleteProductRequest $request): JsonResponse
+    {
+        $checkData = $this->productService->getDataByID($request->uuid, 'uuid');
+        if ($checkData['status'] == false) {
+            return $this->errorResponse($checkData['result'], $checkData['message'], $checkData['code']);
+        }
+
+        $result = $this->productService->deleteData($request->uuid);
+        if ($result['status'] == false) {
+            return $this->errorResponse($result['result'], $result['message'], $result['code']);
+        }
+        return $this->successResponse($result['result'], $result['message'], $result['code']);
+    }
 }
