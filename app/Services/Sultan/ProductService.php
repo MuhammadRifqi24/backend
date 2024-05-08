@@ -120,4 +120,43 @@ class ProductService
             'result' => $result
         ];
     }
+
+    public function updateData($datas = [], $product_id)
+    {
+        $status = false;
+        $code = 200;
+        $result = null;
+        DB::beginTransaction();
+        try {
+            $product = Models\Product::findOrFail($product_id);
+            $product->category_id = $datas['category_id'];
+            $product->name  = $datas['name'];
+            $product->image = $datas['image'];
+            $product->description = $datas['description'];
+            $product->harga_beli = $datas['harga_beli'];
+            $product->harga_jual = $datas['harga_jual'];
+            $product->status = $datas['status'];
+            $product->save();
+
+            $result = $product;
+            $message = "Successfully Update Product";
+            $status = true;
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            $code = $e->getCode();
+            $message = $e->getMessage();
+            $result = [
+                'get_file' => $e->getFile(),
+                'get_line' => $e->getLine()
+            ];
+        }
+
+        return [
+            'code' => $code,
+            'status' => $status,
+            'message' => $message,
+            'result' => $result
+        ];
+    }
 }

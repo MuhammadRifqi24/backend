@@ -14,4 +14,5 @@ Route::get('/', function () {
 Route::middleware(['auth:sanctum', 'checkVerifyEmail', 'checkRole:stan'])->group(function () {
     Route::get('product/index', [Stan\ProductController::class, 'index']);
     Route::post('product/insert', [Stan\ProductController::class, 'insert']);
+    Route::post('product/update', [Stan\ProductController::class, 'update']);
 });
