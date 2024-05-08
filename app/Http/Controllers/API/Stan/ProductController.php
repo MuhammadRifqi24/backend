@@ -30,4 +30,45 @@ class ProductController extends Controller
 
         return $this->successResponse($result['result'], $result['message'], $result['code']);
     }
+
+    public function insert(Requests\Stan\StoreProductRequest $request): JsonResponse
+    {
+        $auth = $request->user();
+
+        //* check cafe_management
+        $cafe_management = $this->cafeService->getCafe($auth->id, 'get_info');
+        if ($cafe_management['status'] == false) {
+            return $this->errorResponse($cafe_management['result'], $cafe_management['message'], $cafe_management['code']);
+        }
+        $cafe_management = $cafe_management['result'];
+
+        $name_image = null;
+        if ($request->hasfile('image')) {
+            $file = $request->file('image');
+            $name_image = $cafe_management['cafe_id'] . '-product-' . $auth->id . '-' . time() . '.' . $file->getClientOriginalExtension();
+            $upload = FUS::uploadProduct($file, $name_image, '');
+            if ($upload['status'] === false) {
+                return $this->errorResponse($upload['result'], "Gagal Upload", 500);
+            }
+        }
+
+        $result = $this->productService->insertData([
+            'cafe_id' => $cafe_management['cafe_id'],
+            'stan_id' => $cafe_management['stan_id'],
+            'category_id' => $request->category_id,
+            'name' => $request->name,
+            'image' => $name_image,
+            'description' => $request->description,
+            'harga_beli' => $request->harga_beli,
+            'harga_jual' => $request->harga_jual,
+            'is_stock' => $request->is_stock,
+            'qty' => $request->qty,
+            'status' => true
+        ]);
+
+        if ($result['status'] == false) {
+            return $this->errorResponse($result['result'], $result['message'], $result['code']);
+        }
+        return $this->successResponse($result['result'], $result['message'], $result['code']);
+    }
 }
