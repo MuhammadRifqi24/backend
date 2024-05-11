@@ -16,4 +16,7 @@ Route::middleware(['auth:sanctum', 'checkVerifyEmail', 'checkRole:owner'])->grou
     Route::post('product/insert', [Owner\ProductController::class, 'insert']);
     Route::post('product/update', [Owner\ProductController::class, 'update']);
     Route::delete('product/delete', [Owner\ProductController::class, 'destroy']);
+
+    Route::get('cafe/index', [Owner\CafeController::class, 'index']);
+    Route::post('cafe/update', [Owner\CafeController::class, 'update']);
 });
