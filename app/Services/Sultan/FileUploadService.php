@@ -57,6 +57,22 @@ class FileUploadService
     {
         $result = [];
         try {
+            // cek jika folder ada
+            $targetDirectory = public_path('images/cafe/');
+            if (!is_dir($targetDirectory)) {
+                mkdir($targetDirectory, 0777, true);
+            }
+            
+            $thumbnailDirectory = public_path('images/cafe/thumbnail/');
+            if (!is_dir($thumbnailDirectory)) {
+                mkdir($thumbnailDirectory, 0777, true);
+            }
+
+            $tempDirectory = public_path('images/cafe/temp/');
+            if (!is_dir($tempDirectory)) {
+                mkdir($tempDirectory, 0777, true);
+            }
+
             $manager = new ImageManager(new Driver());
             if ($update != null) {
                 $cekimage = public_path('images/cafe/' . $update);

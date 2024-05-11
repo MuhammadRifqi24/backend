@@ -32,7 +32,7 @@ class CafeController extends Controller
     {
         $checkData = $this->cafeService->getCafe($request->uuid, 'uuid');
         if ($checkData['status'] == false) {
-            return $this->errorResponse($checkData['message'], $checkData['result'], $checkData['code']);
+            return $this->errorResponse($checkData['result'], $checkData['message'], $checkData['code']);
         }
         $checkData = $checkData['result'];
 
