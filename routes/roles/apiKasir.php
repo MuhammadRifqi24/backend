@@ -12,8 +12,8 @@ Route::get('/', function () {
 });
 
 Route::middleware(['auth:sanctum', 'checkVerifyEmail', 'checkRole:kasir'])->group(function () {
-    Route::get('product/index', [Stan\ProductController::class, 'index']);
-    Route::post('product/insert', [Stan\ProductController::class, 'insert']);
-    Route::post('product/update', [Stan\ProductController::class, 'update']);
-    Route::delete('product/delete', [Stan\ProductController::class, 'destroy']);
+    Route::get('product/index', [Kasir\ProductController::class, 'index']);
+    Route::post('product/insert', [Kasir\ProductController::class, 'insert']);
+    Route::post('product/update', [Kasir\ProductController::class, 'update']);
+    Route::delete('product/delete', [Kasir\ProductController::class, 'destroy']);
 });
