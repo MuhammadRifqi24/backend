@@ -26,6 +26,19 @@ class CafeService
                     break;
                 case 'uuid':
                     $result = Models\Cafe::where('uuid', $id)->first();
+                    if (!$result) {
+                        $code = 404;
+                        $message = 'Data Not Found';
+                        $result = null;
+                    }
+                    break;
+                case 'cafe_id':
+                    $result = Models\Cafe::where('id', $id)->first();
+                    if (!$result) {
+                        $code = 404;
+                        $message = 'Data Not Found';
+                        $result = null;
+                    }
                     break;
                 case 'get_info':
                     $cafe_management = Models\CafeManagement::where('user_id', $id)->first();

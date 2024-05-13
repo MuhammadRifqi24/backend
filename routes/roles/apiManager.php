@@ -19,4 +19,7 @@ Route::middleware(['auth:sanctum', 'checkVerifyEmail', 'checkRole:manager'])->gr
 
     Route::post('stock/increment/{uuid}', [Manager\StockController::class, 'incrementData']);
     Route::post('stock/decrement/{uuid}', [Manager\StockController::class, 'decrementData']);
+
+    Route::get('cafe/index', [Manager\CafeController::class, 'index']);
+    Route::post('cafe/update', [Manager\CafeController::class, 'update']);
 });
