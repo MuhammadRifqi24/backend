@@ -1,13 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\API\Manager;
+namespace App\Http\Controllers\API\Pelayan;
 
 use App\Services;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\API\BaseController as Controller;
 use App\Http\Requests;
-use App\Services\FileUploadService as FUS;
 
 class TableInfoController extends Controller
 {
@@ -32,7 +31,7 @@ class TableInfoController extends Controller
         return $this->successResponse($result['result'], $result['message'], $result['code']);
     }
 
-    public function insert(Requests\Manager\StoreTableInfoRequest $request): JsonResponse
+    public function insert(Requests\Pelayan\StoreTableInfoRequest $request): JsonResponse
     {
         $auth = $request->user();
 
@@ -55,7 +54,7 @@ class TableInfoController extends Controller
         return $this->successResponse($result['result'], $result['message'], $result['code']);
     }
 
-    public function update(Requests\Manager\UpdateTableInfoRequest $request): JsonResponse
+    public function update(Requests\Pelayan\UpdateTableInfoRequest $request): JsonResponse
     {
         $checkData = $this->tableInfoService->getDataByID($request->uuid, 'uuid');
         if ($checkData['status'] == false) {
@@ -76,7 +75,7 @@ class TableInfoController extends Controller
         return $this->successResponse($result['result'], $result['message'], $result['code']);
     }
 
-    public function destroy(Requests\Manager\DeleteTableInfoRequest $request): JsonResponse
+    public function destroy(Requests\Pelayan\DeleteTableInfoRequest $request): JsonResponse
     {
         $checkData = $this->tableInfoService->getDataByID($request->uuid, 'uuid');
         if ($checkData['status'] == false) {
@@ -90,7 +89,7 @@ class TableInfoController extends Controller
         return $this->successResponse($result['result'], $result['message'], $result['code']);
     }
 
-    public function bookTable(Requests\Manager\BookTableInfoRequest $request): JsonResponse
+    public function bookTable(Requests\Pelayan\BookTableInfoRequest $request): JsonResponse
     {
         $checkData = $this->tableInfoService->getDataByID($request->uuid, 'uuid');
         if ($checkData['status'] == false) {
@@ -111,7 +110,7 @@ class TableInfoController extends Controller
         return $this->successResponse($result['result'], $result['message'], $result['code']);
     }
 
-    public function finishTable(Requests\Manager\BookTableInfoRequest $request): JsonResponse
+    public function finishTable(Requests\Pelayan\BookTableInfoRequest $request): JsonResponse
     {
         $checkData = $this->tableInfoService->getDataByID($request->uuid, 'uuid');
         if ($checkData['status'] == false) {

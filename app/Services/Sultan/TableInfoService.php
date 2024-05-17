@@ -212,7 +212,7 @@ class TableInfoService
         ];
     }
 
-    public function releaseTable($datas = [], $table_info_id)
+    public function finishTable($datas = [], $table_info_id)
     {
         $status = false;
         $code = 200;
