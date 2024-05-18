@@ -165,4 +165,41 @@ class OrderService
             'result' => $result
         ];
     }
+
+    public function updateData($datas = [], $order_id)
+    {
+        $status = false;
+        $code = 200;
+        $result = null;
+        DB::beginTransaction();
+        try {
+            $order = Models\Order::findOrFail($order_id);
+            $order->user_id = $datas['user_id'] == null ? null : $datas['user_id'];
+            $order->table_info_id = $datas['table_info_id'] == null ? null : $datas['table_info_id'];
+            $order->customer_name = $datas['customer_name'];
+            $order->note = $datas['note'];
+            $order->save();
+            echo 1;
+
+            $result = $order;
+            $message = "Successfully Update Order";
+            $status = true;
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            $code = $e->getCode();
+            $message = $e->getMessage();
+            $result = [
+                'get_file' => $e->getFile(),
+                'get_line' => $e->getLine()
+            ];
+        }
+
+        return [
+            'code' => $code,
+            'status' => $status,
+            'message' => $message,
+            'result' => $result
+        ];
+    }
 }

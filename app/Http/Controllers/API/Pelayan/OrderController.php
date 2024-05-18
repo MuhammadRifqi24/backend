@@ -119,4 +119,25 @@ class OrderController extends Controller
         
         return $this->successResponse($result['result'], $result['message'], $result['code']);
     }
+
+    public function update(Requests\Pelayan\UpdateOrderRequest $request): JsonResponse
+    {
+        $checkData = $this->orderService->getDataByID($request->uuid, 'uuid');
+        if ($checkData['status'] == false) {
+            return $this->errorResponse($checkData['message'], $checkData['result'], $checkData['code']);
+        }
+        $checkData = $checkData['result'];
+
+        $result = $this->orderService->updateData([
+            'table_info_id' => $request->table_info_id,
+            'user_id' => $request->user_id,
+            'customer_name' => $request->customer_name != null ? $request->customer_name : $checkData->customer_name,
+            'note' => $request->note,
+        ], $checkData->id);
+
+        if ($result['status'] == false) {
+            return $this->errorResponse($result['result'], $result['message'], $result['code']);
+        }
+        return $this->successResponse($result['result'], $result['message'], $result['code']);
+    }
 }
