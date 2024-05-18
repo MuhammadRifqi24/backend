@@ -9,13 +9,6 @@ use App\Services\StockService;
 
 class OrderService
 {
-    private $orderDetailService;
-    
-    public function __construct(OrderDetailService $orderDetailService)
-    {
-        $this->orderDetailService = $orderDetailService;
-    }
-
     public function getDataByID($id, $ket = "")
     {
         $status = false;
@@ -30,19 +23,15 @@ class OrderService
                     if ($cafeManagement) {
                         $message .= ' by CafeId';
                         $result = Models\Order::with('table_info', 'user', 'cafe')->where('cafe_id', $cafeManagement->cafe_id)->get();
+                        if(!$result) {
+                            $code = 404;
+                            $message = 'Data Not Found';
+                            $status = false;
+                        }
                     } else {
                         $code = 404;
                         $message = 'Data Not Found';
                         $status = false;
-                    }
-
-                    if($result) {
-                        foreach ($result as $key => $value) {
-                            $orderDetails = $this->orderDetailService->getDataByID($value['id'], 'order_id');
-                            if($orderDetails['status']) {
-                                $result[$key]['orderDetails'] = $orderDetails['result'];
-                            }
-                        }
                     }
                     break;
                 case 'user_id':
@@ -51,28 +40,27 @@ class OrderService
                         $code = 404;
                         $message = 'Data Not Found';
                         $status = false;
-                    } else {
-                        foreach ($result as $key => $value) {
-                            $orderDetails = $this->orderDetailService->getDataByID($value['id'], 'order_id');
-                            if($orderDetails['status']) {
-                                $result[$key]['orderDetails'] = $orderDetails['result'];
-                            }
-                        }
                     }
                     break;
                 case 'table_info_id':
-                    $result = Models\Order::with('table_info', 'user', 'cafe')->where('table_info_id', $id)->get();
-                    if(!$result) {
+                    $cafeManagement = Models\CafeManagement::select('id', 'user_id', 'cafe_id')->where(['user_id' => $id['user_id']])->first();
+                    if ($cafeManagement) {
+                        $message .= ' by CafeId';
+                        $result = Models\Order::with('table_info', 'user', 'cafe')
+                                ->where([
+                                    'cafe_id' => $cafeManagement->cafe_id,
+                                    'table_info_id' => $id['table_info_id']
+                                ])
+                                ->get();
+                        if(!$result) {
+                            $code = 404;
+                            $message = 'Data Not Found';
+                            $status = false;
+                        }
+                    } else {
                         $code = 404;
                         $message = 'Data Not Found';
                         $status = false;
-                    } else {
-                        foreach ($result as $key => $value) {
-                            $orderDetails = $this->orderDetailService->getDataByID($value['id'], 'order_id');
-                            if($orderDetails['status']) {
-                                $result[$key]['orderDetails'] = $orderDetails['result'];
-                            }
-                        }
                     }
                     break;
                 case 'uuid':
@@ -81,11 +69,6 @@ class OrderService
                         $code = 404;
                         $message = 'Data Not Found';
                         $status = false;
-                    } else {
-                        $orderDetails = $this->orderDetailService->getDataByID($result['id'], 'order_id');
-                        if($orderDetails['status']) {
-                            $result['orderDetails'] = $orderDetails['result'];
-                        }
                     }
                     break;
                 default:
@@ -94,15 +77,79 @@ class OrderService
                         $code = 404;
                         $message = 'Data Not Found';
                         $status = false;
-                    } else {
-                        $orderDetails = $this->orderDetailService->getDataByID($result['id'], 'order_id');
-                        if($orderDetails['status']) {
-                            $result['orderDetails'] = $orderDetails['result'];
-                        }
                     }
                     break;
             }
         } catch (\Throwable $e) {
+            $code = $e->getCode();
+            $message = $e->getMessage();
+            $result = [
+                'get_file' => $e->getFile(),
+                'get_line' => $e->getLine()
+            ];
+        }
+
+        return [
+            'code' => $code,
+            'status' => $status,
+            'message' => $message,
+            'result' => $result
+        ];
+    }
+
+    public function insertData($datas = [])
+    {
+        $status = false;
+        $code = 200;
+        $result = null;
+        DB::beginTransaction();
+        try {
+            $uuid = Str::uuid()->getHex()->toString();
+
+            $order = new Models\Order();
+            $order->user_id = isset($datas['user_id']) ? $datas['user_id'] : null;
+            $order->table_info_id = isset($datas['table_info_id']) ? $datas['table_info_id'] : null;
+            $order->cafe_id = $datas['cafe_id'];
+            $order->customer_name  = $datas['customer_name'];
+            $order->note = isset($datas['note']) ? $datas['note'] : null;
+            $order->total_price = $datas['total_price'];
+            $order->status = $datas['status'];
+            $order->payment_status = $datas['payment_status'];
+            $order->uuid = $uuid;
+            $order->save();
+
+            $result = $order;
+
+            // insert ke tabel orderdetail
+            foreach ($datas['order_details'] as $key => $value) {
+                $uuid = Str::uuid()->getHex()->toString();
+
+                $order_detail = new Models\OrderDetail();
+                $order_detail->order_id = $result->id;
+                $order_detail->stan_id = isset($value['stan_id']) ? $value['stan_id'] : null;
+                $order_detail->product_id = $value['product_id'];
+                $order_detail->qty = $value['qty'];
+                $order_detail->qty = $value['qty'];
+                $order_detail->price = $value['price'];
+                $order_detail->uuid = $uuid;
+                $order_detail->save();
+
+                $description = "Stock Berkurang";
+                $stockService = new StockService();
+                $resultStock = $stockService->saveStock($value['product_id'], $value['qty'], "out", $description);
+                if($resultStock['status'] == false) {
+                    $status = false;
+                    break;
+                } else {
+                    $message = "Successfully insert Order and Order Detail";
+                    $status = true;
+                    $code = 201;
+                }
+            }
+
+            if ($status === true) DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollBack();
             $code = $e->getCode();
             $message = $e->getMessage();
             $result = [

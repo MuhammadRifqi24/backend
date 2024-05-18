@@ -23,4 +23,5 @@ Route::middleware(['auth:sanctum', 'checkVerifyEmail', 'checkRole:pelayan'])->gr
     Route::get('order/uuid/{uuid}', [Pelayan\OrderController::class, 'getByUUID']);
     Route::get('order/user/{user_id}', [Pelayan\OrderController::class, 'getByUserId']);
     Route::get('order/table/{table_info_id}', [Pelayan\OrderController::class, 'getByTableInfoId']);
+    Route::post('order/insert', [Pelayan\OrderController::class, 'insert']);
 });

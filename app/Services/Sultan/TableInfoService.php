@@ -80,14 +80,14 @@ class TableInfoService
         try {
             $uuid = Str::uuid()->getHex()->toString();
 
-            $product = new Models\TableInfo();
-            $product->cafe_id = $datas['cafe_id'];
-            $product->name  = $datas['name'];
-            $product->status = $datas['status'];
-            $product->uuid = $uuid;
-            $product->save();
+            $table_info = new Models\TableInfo();
+            $table_info->cafe_id = $datas['cafe_id'];
+            $table_info->name  = $datas['name'];
+            $table_info->status = $datas['status'];
+            $table_info->uuid = $uuid;
+            $table_info->save();
 
-            $result = $product;
+            $result = $table_info;
             $message = "Successfully insert Table Info";
             $status = true;
             $code = 201;
