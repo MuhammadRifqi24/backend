@@ -18,4 +18,9 @@ Route::middleware(['auth:sanctum', 'checkVerifyEmail', 'checkRole:pelayan'])->gr
     Route::post('table-info/book-table', [Pelayan\TableInfoController::class, 'bookTable']);
     Route::post('table-info/finish-table', [Pelayan\TableInfoController::class, 'finishTable']);
     Route::delete('table-info/delete', [Pelayan\TableInfoController::class, 'destroy']);
+
+    Route::get('order/index', [Pelayan\OrderController::class, 'index']);
+    Route::get('order/uuid/{uuid}', [Pelayan\OrderController::class, 'getByUUID']);
+    Route::get('order/user/{user_id}', [Pelayan\OrderController::class, 'getByUserId']);
+    Route::get('order/table/{table_info_id}', [Pelayan\OrderController::class, 'getByTableInfoId']);
 });
