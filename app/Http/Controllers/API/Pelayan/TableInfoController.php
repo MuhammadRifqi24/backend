@@ -44,8 +44,7 @@ class TableInfoController extends Controller
 
         $result = $this->tableInfoService->insertData([
             'cafe_id' => $cafe_management['cafe_id'],
-            'name' => $request->name,
-            'status' => true
+            'total' => $request->total
         ]);
 
         if ($result['status'] == false) {

@@ -86,21 +86,55 @@ class TableInfoService
         ];
     }
 
+    private function getLastNumber($cafe_id) {
+        $result = Models\TableInfo::select('number')->where('cafe_id', $cafe_id)->latest()->get();
+        if(count($result) == 0) {
+            $max = null;
+        } else {
+            $max = $result[0]->number;
+
+            foreach ($result as $key => $value) {
+                if($value->number > $max) {
+                    $max = $value->number;
+                }
+            }
+        }
+
+        return $max;
+    }
+
     public function insertData($datas = [])
     {
         $status = false;
         $code = 200;
         $result = null;
+
         DB::beginTransaction();
         try {
-            $uuid = Str::uuid()->getHex()->toString();
+            $max_number = $this->getLastNumber($datas['cafe_id']);
+            if($max_number == null) {
+                $max_number = 1;
+            } else {
+                $max_number++;
+            }
 
-            $table_info = new Models\TableInfo();
-            $table_info->cafe_id = $datas['cafe_id'];
-            $table_info->name  = $datas['name'];
-            $table_info->status = $datas['status'];
-            $table_info->uuid = $uuid;
-            $table_info->save();
+            $data = [];
+            
+            $total = ($datas['total']-1) + $max_number;
+            for ($i = $max_number; $i <= $total; $i++) {
+                $uuid = Str::uuid()->getHex()->toString();
+                $data[] = [
+                    'cafe_id' => $datas['cafe_id'],
+                    'name' => 'Meja',
+                    'number' => $i,
+                    'status' => true,
+                    'uuid' => $uuid,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            }
+
+            $table_info = Models\TableInfo::insert($data);
 
             $result = $table_info;
             $message = "Successfully insert Table Info";
@@ -161,6 +195,20 @@ class TableInfoService
         ];
     }
 
+    private function reorderNumber($cafe_id, $number) {
+        $max = $this->getLastNumber($cafe_id);
+        if($max != null && $max != $number) {
+            $table_infos = Models\TableInfo::select(['number', 'uuid'])->where('cafe_id', $cafe_id)->get();
+            $count_table = count($table_infos);
+
+            for ($i=1; $i <= $count_table; $i++) { 
+                $table_info = Models\TableInfo::where('uuid', $table_infos[$i-1]->uuid)->first();
+                $table_info->number = $i;
+                $table_info->save();
+            }
+        }
+    }
+
     public function deleteData($uuid)
     {
         $status = false;
@@ -169,8 +217,13 @@ class TableInfoService
         $message = '';
         try {
             $table_info = Models\TableInfo::where('uuid', $uuid)->first();
+
+            
             if ($table_info) {
                 $table_info->delete();
+
+                $this->reorderNumber($table_info->cafe_id, $table_info->number);
+
                 $status = true;
                 $result = true;
                 $message = 'Successfully delete Table Info';

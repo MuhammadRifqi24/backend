@@ -23,9 +23,9 @@ return new class extends Migration
             $table->boolean('payment_status')->default(false);
             $table->uuid('uuid');
             $table->timestamps();
-            $table->foreign('user_id')->references('id')->on('users');
-            $table->foreign('table_info_id')->references('id')->on('table_info');
-            $table->foreign('cafe_id')->references('id')->on('cafes');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
+            $table->foreign('table_info_id')->references('id')->on('table_info')->onDelete('set null');
+            $table->foreign('cafe_id')->references('id')->on('cafes')->onDelete('cascade');
         });
     }
 

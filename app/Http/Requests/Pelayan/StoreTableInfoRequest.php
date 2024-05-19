@@ -24,14 +24,15 @@ class StoreTableInfoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required',
+            'total' => 'required|numeric',
         ];
     }
 
     public function messages(): array
     {
         return [
-            'name.required' => 'Nama Harus di Isi',
+            'total.required' => 'Total Harus di Isi',
+            'total.numeric' => 'Total harus berupa angka',
         ];
     }
 
