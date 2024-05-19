@@ -202,4 +202,38 @@ class OrderService
             'result' => $result
         ];
     }
+
+    public function deleteData($uuid)
+    {
+        $status = false;
+        $code = 200;
+        $result = null;
+        $message = '';
+        try {
+            $order = Models\Order::where('uuid', $uuid)->first();
+            if ($order) {
+                $order->delete();
+                $status = true;
+                $result = true;
+                $message = 'Successfully delete Order';
+            } else {
+                $code = 404;
+                $message = 'Data tidak ditemukan';
+            }
+        } catch (\Throwable $e) {
+            $code = $e->getCode();
+            $message = $e->getMessage();
+            $result = [
+                'get_file' => $e->getFile(),
+                'get_line' => $e->getLine()
+            ];
+        }
+
+        return [
+            'code' => $code,
+            'status' => $status,
+            'message' => $message,
+            'result' => $result
+        ];
+    }
 }

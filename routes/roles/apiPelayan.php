@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\Pelayan\OrderController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\Pelayan;
 
@@ -25,4 +26,5 @@ Route::middleware(['auth:sanctum', 'checkVerifyEmail', 'checkRole:pelayan'])->gr
     Route::get('order/table/{table_info_id}', [Pelayan\OrderController::class, 'getByTableInfoId']);
     Route::post('order/insert', [Pelayan\OrderController::class, 'insert']);
     Route::post('order/update', [Pelayan\OrderController::class, 'update']);
+    Route::delete('order/delete', [Pelayan\OrderController::class, 'destroy']);
 });

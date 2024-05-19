@@ -140,4 +140,18 @@ class OrderController extends Controller
         }
         return $this->successResponse($result['result'], $result['message'], $result['code']);
     }
+
+    public function destroy(Requests\Pelayan\DeleteOrderRequest $request): JsonResponse
+    {
+        $checkData = $this->orderService->getDataByID($request->uuid, 'uuid');
+        if ($checkData['status'] == false) {
+            return $this->errorResponse($checkData['result'], $checkData['message'], $checkData['code']);
+        }
+
+        $result = $this->orderService->deleteData($request->uuid);
+        if ($result['status'] == false) {
+            return $this->errorResponse($result['result'], $result['message'], $result['code']);
+        }
+        return $this->successResponse($result['result'], $result['message'], $result['code']);
+    }
 }
