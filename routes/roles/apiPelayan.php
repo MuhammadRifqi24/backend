@@ -26,5 +26,12 @@ Route::middleware(['auth:sanctum', 'checkVerifyEmail', 'checkRole:pelayan'])->gr
     Route::get('order/table/{table_info_id}', [Pelayan\OrderController::class, 'getByTableInfoId']);
     Route::post('order/insert', [Pelayan\OrderController::class, 'insert']);
     Route::post('order/update', [Pelayan\OrderController::class, 'update']);
+    Route::post('order/status', [Pelayan\OrderController::class, 'updateOrderStatus']);
     Route::delete('order/delete', [Pelayan\OrderController::class, 'destroy']);
 });
+
+// Status order
+// 0 Pending (setelah dibuat order oleh pelayan atau customer)
+// 1 Accept (setelah diterima oleh pelayan atau dapur)
+// 2 Process (setelah diterima pesanannya oleh dapur)
+// 3 Finished (setelah pesanan selesai dibuat)

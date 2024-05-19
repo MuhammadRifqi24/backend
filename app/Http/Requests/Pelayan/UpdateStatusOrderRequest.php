@@ -28,7 +28,7 @@ class UpdateStatusOrderRequest extends FormRequest
     {
         return [
             'uuid.required' => 'UUID Harus ada',
-            'status.required' => 'Status Harus ada',
+            'status.required' => 'Status Order Harus ada',
         ];
     }
 
