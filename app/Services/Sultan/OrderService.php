@@ -268,4 +268,37 @@ class OrderService
             'result' => $result
         ];
     }
+
+    public function updatePaymentStatus($datas = [], $order_id)
+    {
+        $status = false;
+        $code = 200;
+        $result = null;
+        DB::beginTransaction();
+        try {
+            $order = Models\Order::findOrFail($order_id);
+            $order->payment_status = $datas['payment_status'];
+            $order->save();
+
+            $result = $order;
+            $message = "Successfully Update Order Payment Status";
+            $status = true;
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            $code = $e->getCode();
+            $message = $e->getMessage();
+            $result = [
+                'get_file' => $e->getFile(),
+                'get_line' => $e->getLine()
+            ];
+        }
+
+        return [
+            'code' => $code,
+            'status' => $status,
+            'message' => $message,
+            'result' => $result
+        ];
+    }
 }

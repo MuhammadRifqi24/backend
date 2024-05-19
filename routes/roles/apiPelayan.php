@@ -27,6 +27,7 @@ Route::middleware(['auth:sanctum', 'checkVerifyEmail', 'checkRole:pelayan'])->gr
     Route::post('order/insert', [Pelayan\OrderController::class, 'insert']);
     Route::post('order/update', [Pelayan\OrderController::class, 'update']);
     Route::post('order/status', [Pelayan\OrderController::class, 'updateOrderStatus']);
+    Route::post('order/payment-status', [Pelayan\OrderController::class, 'updatePaymentStatus']);
     Route::delete('order/delete', [Pelayan\OrderController::class, 'destroy']);
 });
 
@@ -35,3 +36,7 @@ Route::middleware(['auth:sanctum', 'checkVerifyEmail', 'checkRole:pelayan'])->gr
 // 1 Accept (setelah diterima oleh pelayan atau dapur)
 // 2 Process (setelah diterima pesanannya oleh dapur)
 // 3 Finished (setelah pesanan selesai dibuat)
+
+// Status Payment
+// 0 Pending (Belum dibayar)
+// 1 Finished (SUdah dibayar)

@@ -172,4 +172,22 @@ class OrderController extends Controller
         }
         return $this->successResponse($result['result'], $result['message'], $result['code']);
     }
+
+    public function updatePaymentStatus(Requests\Pelayan\UpdateStatusOrderPaymentRequest $request): JsonResponse
+    {
+        $checkData = $this->orderService->getDataByID($request->uuid, 'uuid');
+        if ($checkData['status'] == false) {
+            return $this->errorResponse($checkData['message'], $checkData['result'], $checkData['code']);
+        }
+        $checkData = $checkData['result'];
+        
+        $result = $this->orderService->updatePaymentStatus([
+            'payment_status' => $request->payment_status,
+        ], $checkData->id);
+
+        if ($result['status'] == false) {
+            return $this->errorResponse($result['result'], $result['message'], $result['code']);
+        }
+        return $this->successResponse($result['result'], $result['message'], $result['code']);
+    }
 }

@@ -7,7 +7,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class UpdateStatusOrderRequest extends FormRequest
+class UpdateStatusOrderPaymentRequest extends FormRequest
 {
     use ApiResponser;
 
@@ -20,7 +20,7 @@ class UpdateStatusOrderRequest extends FormRequest
     {
         return [
             'uuid' => 'required',
-            'status' => 'required|in:0,1,2,3',
+            'payment_status' => 'required|in:0,1',
         ];
     }
 
@@ -28,8 +28,8 @@ class UpdateStatusOrderRequest extends FormRequest
     {
         return [
             'uuid.required' => 'UUID Harus ada',
-            'status.required' => 'Status Order Harus ada',
-            'status.in' => 'Status Order harus salah satu dari: 0, 1, 2, 3',
+            'payment_status.required' => 'Payment Status Order Harus ada',
+            'payment_status.in' => 'Payment Status Order harus salah satu dari: 0, 1',
         ];
     }
 
