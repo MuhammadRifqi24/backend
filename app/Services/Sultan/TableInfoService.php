@@ -22,6 +22,11 @@ class TableInfoService
                     if ($cafeManagement) {
                         $message .= ' by CafeId';
                         $result = Models\TableInfo::with('cafe')->where('cafe_id', $cafeManagement->cafe_id)->get();
+                        if(!$result) {
+                            $code = 404;
+                            $message = 'Data Not Found';
+                            $status = false;
+                        }
                     } else {
                         $code = 404;
                         $message = 'Data Not Found';
@@ -33,6 +38,11 @@ class TableInfoService
                     if ($cafeManagement) {
                         $message .= ' by CafeId';
                         $result = Models\TableInfo::with('cafe')->where('cafe_id', $cafeManagement->cafe_id)->get();
+                        if(!$result) {
+                            $code = 404;
+                            $message = 'Data Not Found';
+                            $status = false;
+                        }
                     } else {
                         $code = 404;
                         $message = 'Data Not Found';
@@ -41,12 +51,17 @@ class TableInfoService
                     break;
                 case 'uuid':
                     $result = Models\TableInfo::with('cafe')->where('uuid', $id)->first();
+                    if(!$result) {
+                        $code = 404;
+                        $message = 'Data Not Found';
+                        $status = false;
+                    }
                     break;
                 case 'status':
                     $result = Models\TableInfo::where(['uuid' => $id, 'status' => true])->first();
                     if (!$result) {
                         $code = 404;
-                        $message = 'Meja tidak dapat dipesan';
+                        $message = 'Data Not Found';
                         $status = false;
                     }
                     break;
@@ -119,8 +134,9 @@ class TableInfoService
         DB::beginTransaction();
         try {
             $table_info = Models\TableInfo::findOrFail($table_info_id);
-            $table_info->name  = $datas['name'];
-            $table_info->status = $datas['status'];
+            $table_info->user_id = $datas['user_id'] == null ? null : $datas['user_id'];
+            $table_info->name = $datas['name'] == null ? $table_info->name : $datas['name'];
+            $table_info->status = $datas['status'] == null ? $table_info->status : $datas['status'];
             $table_info->save();
 
             $result = $table_info;
@@ -187,12 +203,20 @@ class TableInfoService
         DB::beginTransaction();
         try {
             $table_info = Models\TableInfo::findOrFail($table_info_id);
-            $table_info->status = $datas['status'];
-            $table_info->save();
-
-            $result = $table_info;
-            $message = "Successfully Booking Table";
-            $status = true;
+            if ($table_info->status == 1) {
+                $table_info->user_id = $datas['user_id'] == null ? null : $datas['user_id'];
+                $table_info->status = 0;
+                $table_info->save();
+    
+                $result = $table_info;
+                $message = "Successfully Booking Table";
+                $status = true;
+            } else {
+                $result = $table_info;
+                $message = "Failed to Book a Table, Already Booked";
+                $status = false;
+                $code = 409;
+            }
             DB::commit();
         } catch (\Throwable $e) {
             DB::rollBack();
@@ -212,7 +236,7 @@ class TableInfoService
         ];
     }
 
-    public function finishTable($datas = [], $table_info_id)
+    public function finishTable($table_info_id)
     {
         $status = false;
         $code = 200;
@@ -220,11 +244,12 @@ class TableInfoService
         DB::beginTransaction();
         try {
             $table_info = Models\TableInfo::findOrFail($table_info_id);
-            $table_info->status = $datas['status'];
+            $table_info->status = 1;
+            $table_info->user_id = null;
             $table_info->save();
 
             $result = $table_info;
-            $message = "Successfully Booking Table";
+            $message = "Successfully Made the Table Available";
             $status = true;
             DB::commit();
         } catch (\Throwable $e) {

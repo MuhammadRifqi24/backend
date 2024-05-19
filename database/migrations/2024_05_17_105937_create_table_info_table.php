@@ -14,11 +14,13 @@ return new class extends Migration
         Schema::create('table_info', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('cafe_id');
+            $table->unsignedBigInteger('user_id')->nullable();
             $table->string('name');
             $table->boolean('status')->default(false);
             $table->uuid('uuid');
             $table->timestamps();
             $table->foreign('cafe_id')->references('id')->on('cafes')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
         });
     }
 

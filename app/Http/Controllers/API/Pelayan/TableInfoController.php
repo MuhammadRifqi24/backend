@@ -66,6 +66,7 @@ class TableInfoController extends Controller
 
         $result = $this->tableInfoService->updateData([
             'name' => $request->name,
+            'user_id' => $request->user_id,
             'status' => $request->status
         ], $checkData->id);
 
@@ -97,11 +98,8 @@ class TableInfoController extends Controller
         }
         $checkData = $checkData['result'];
 
-        $auth = $request->user();
-
         $result = $this->tableInfoService->bookTable([
-            'name' => $request->name,
-            'status' => $request->status
+            'user_id' => $request->user_id,
         ], $checkData->id);
 
         if ($result['status'] == false) {
@@ -110,7 +108,7 @@ class TableInfoController extends Controller
         return $this->successResponse($result['result'], $result['message'], $result['code']);
     }
 
-    public function finishTable(Requests\Pelayan\BookTableInfoRequest $request): JsonResponse
+    public function finishTable(Requests\Pelayan\FinishTableInfoRequest $request): JsonResponse
     {
         $checkData = $this->tableInfoService->getDataByID($request->uuid, 'uuid');
         if ($checkData['status'] == false) {
@@ -118,12 +116,7 @@ class TableInfoController extends Controller
         }
         $checkData = $checkData['result'];
 
-        $auth = $request->user();
-
-        $result = $this->tableInfoService->finishTable([
-            'name' => $request->name,
-            'status' => $request->status
-        ], $checkData->id);
+        $result = $this->tableInfoService->finishTable($checkData->id);
 
         if ($result['status'] == false) {
             return $this->errorResponse($result['result'], $result['message'], $result['code']);

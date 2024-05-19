@@ -25,7 +25,7 @@ class BookTableInfoRequest extends FormRequest
     {
         return [
             'uuid' => 'required',
-            'status' => 'required|boolean',
+            'user_id' => 'nullable|exists:users,id',
         ];
     }
 
@@ -33,8 +33,7 @@ class BookTableInfoRequest extends FormRequest
     {
         return [
             'uuid.required' => 'UUID Harus ada',
-            'status.required' => 'Status Table Info harus di Isi',
-            'status.boolean' => 'Status Table Info harus boolean (true / false)',
+            'user_id.exists' => 'User tidak terdeteksi',
         ];
     }
 
