@@ -22,4 +22,11 @@ Route::middleware(['auth:sanctum', 'checkVerifyEmail', 'checkRole:manager'])->gr
 
     Route::get('cafe/index', [Manager\CafeController::class, 'index']);
     Route::post('cafe/update', [Manager\CafeController::class, 'update']);
+
+    Route::get('table-info/index', [Manager\TableInfoController::class, 'index']);
+    Route::post('table-info/insert', [Manager\TableInfoController::class, 'insert']);
+    Route::post('table-info/update', [Manager\TableInfoController::class, 'update']);
+    Route::post('table-info/book-table', [Manager\TableInfoController::class, 'bookTable']);
+    Route::post('table-info/finish-table', [Manager\TableInfoController::class, 'finishTable']);
+    Route::delete('table-info/delete', [Manager\TableInfoController::class, 'destroy']);
 });
