@@ -86,7 +86,7 @@ class TableInfoService
         ];
     }
 
-    private function getLastNumber($cafe_id) {
+    private function getLastMaxNumber($cafe_id) {
         $result = Models\TableInfo::select('number')->where('cafe_id', $cafe_id)->latest()->get();
         if(count($result) == 0) {
             $max = null;
@@ -111,7 +111,7 @@ class TableInfoService
 
         DB::beginTransaction();
         try {
-            $max_number = $this->getLastNumber($datas['cafe_id']);
+            $max_number = $this->getLastMaxNumber($datas['cafe_id']);
             if($max_number == null) {
                 $max_number = 1;
             } else {
@@ -195,20 +195,6 @@ class TableInfoService
         ];
     }
 
-    private function reorderNumber($cafe_id, $number) {
-        $max = $this->getLastNumber($cafe_id);
-        if($max != null && $max != $number) {
-            $table_infos = Models\TableInfo::select(['number', 'uuid'])->where('cafe_id', $cafe_id)->get();
-            $count_table = count($table_infos);
-
-            for ($i=1; $i <= $count_table; $i++) { 
-                $table_info = Models\TableInfo::where('uuid', $table_infos[$i-1]->uuid)->first();
-                $table_info->number = $i;
-                $table_info->save();
-            }
-        }
-    }
-
     public function deleteData($uuid)
     {
         $status = false;
@@ -217,16 +203,19 @@ class TableInfoService
         $message = '';
         try {
             $table_info = Models\TableInfo::where('uuid', $uuid)->first();
-
             
             if ($table_info) {
-                $table_info->delete();
+                $last_number = $this->getLastMaxNumber($table_info->cafe_id);
+                if($last_number == $table_info->number) {
+                    $table_info->delete();
 
-                $this->reorderNumber($table_info->cafe_id, $table_info->number);
-
-                $status = true;
-                $result = true;
-                $message = 'Successfully delete Table Info';
+                    $status = true;
+                    $result = true;
+                    $message = 'Successfully delete Table Info';
+                } else {
+                    $code = 404;
+                    $message = 'Data tidak boleh dihapus';
+                }
             } else {
                 $code = 404;
                 $message = 'Data tidak ditemukan';
