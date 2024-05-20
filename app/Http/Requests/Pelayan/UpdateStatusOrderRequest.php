@@ -20,7 +20,7 @@ class UpdateStatusOrderRequest extends FormRequest
     {
         return [
             'uuid' => 'required',
-            'status' => 'required',
+            'status' => 'required|in:0,1,2,3',
         ];
     }
 
@@ -28,7 +28,8 @@ class UpdateStatusOrderRequest extends FormRequest
     {
         return [
             'uuid.required' => 'UUID Harus ada',
-            'status.required' => 'Status Harus ada',
+            'status.required' => 'Status Order Harus ada',
+            'status.in' => 'Status Order harus salah satu dari: 0, 1, 2, 3',
         ];
     }
 

@@ -16,6 +16,7 @@ class TableInfo extends Model
         'cafe_id',
         'name',
         'status',
+        'number',
         'uuid'
     ];
 

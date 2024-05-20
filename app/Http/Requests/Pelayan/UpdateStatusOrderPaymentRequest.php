@@ -7,7 +7,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class StoreTableInfoRequest extends FormRequest
+class UpdateStatusOrderPaymentRequest extends FormRequest
 {
     use ApiResponser;
 
@@ -16,23 +16,20 @@ class StoreTableInfoRequest extends FormRequest
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
     public function rules(): array
     {
         return [
-            'total' => 'required|numeric',
+            'uuid' => 'required',
+            'payment_status' => 'required|in:0,1',
         ];
     }
 
     public function messages(): array
     {
         return [
-            'total.required' => 'Total Harus di Isi',
-            'total.numeric' => 'Total harus berupa angka',
+            'uuid.required' => 'UUID Harus ada',
+            'payment_status.required' => 'Payment Status Order Harus ada',
+            'payment_status.in' => 'Payment Status Order harus salah satu dari: 0, 1',
         ];
     }
 

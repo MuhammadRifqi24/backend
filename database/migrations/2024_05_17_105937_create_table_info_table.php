@@ -16,6 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('cafe_id');
             $table->unsignedBigInteger('user_id')->nullable();
             $table->string('name');
+            $table->integer('number');
             $table->boolean('status')->default(false);
             $table->uuid('uuid');
             $table->timestamps();
