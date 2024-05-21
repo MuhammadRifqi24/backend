@@ -110,7 +110,8 @@ class OrderService
             $order->user_id = isset($datas['user_id']) ? $datas['user_id'] : null;
             $order->table_info_id = isset($datas['table_info_id']) ? $datas['table_info_id'] : null;
             $order->cafe_id = $datas['cafe_id'];
-            $order->customer_name  = $datas['customer_name'];
+            $order->customer_name = $datas['customer_name'];
+            $order->order_type = $datas['order_type'];
             $order->note = isset($datas['note']) ? $datas['note'] : null;
             $order->total_price = $datas['total_price'];
             $order->status = $datas['status'];

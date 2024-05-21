@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('total_price');
             $table->boolean('status')->default(false);
             $table->boolean('payment_status')->default(false);
+            $table->boolean('order_type');
             $table->uuid('uuid');
             $table->timestamps();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');

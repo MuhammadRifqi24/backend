@@ -106,6 +106,7 @@ class OrderController extends Controller
             'table_info_id' => $request['table_info_id'],
             'cafe_id' => $request['cafe_id'],
             'customer_name' => $request->customer_name,
+            'order_type' => $request->order_type,
             'note' => $request->note,
             'total_price' => $request->total_price,
             'status' => false,
