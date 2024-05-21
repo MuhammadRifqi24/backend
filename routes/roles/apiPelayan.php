@@ -40,6 +40,7 @@ Route::middleware(['auth:sanctum', 'checkVerifyEmail', 'checkRole:pelayan'])->gr
 // 1 Accept (setelah diterima oleh pelayan atau dapur)
 // 2 Process (setelah diterima pesanannya oleh dapur)
 // 3 Finished (setelah pesanan selesai dibuat)
+// 4 Collected (setelah pesanan diambil oleh customer)
 
 // Status Payment
 // 0 Pending (Belum dibayar)
