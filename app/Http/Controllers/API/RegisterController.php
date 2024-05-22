@@ -34,6 +34,21 @@ class RegisterController extends Controller
         return $this->successResponse($result['result'], $result['message'], $result['code']);
     }
 
+    public function registerCustomer(Requests\RegisterUserRequest $request): JsonResponse
+    {
+        $result = $this->userService->userRegister([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => $request->password,
+            'role' => 'user'
+        ], "customer");
+
+        if ($result['status'] == false) {
+            return $this->errorResponse($result['result'], $result['message'], $result['code']);
+        }
+        return $this->successResponse($result['result'], $result['message'], $result['code']);
+    }
+
     public function registerManager(Requests\RegisterManagerRequest $request): JsonResponse
     {
         $auth = auth()->user();

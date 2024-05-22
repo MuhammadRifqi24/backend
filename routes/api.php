@@ -11,6 +11,7 @@ Route::get('/', function () {
 });
 Route::post('auth/login', [API\AuthController::class, 'login']);
 Route::post('auth/register-owner', [API\RegisterController::class, 'registerOwner']);
+Route::post('auth/register-customer', [API\RegisterController::class, 'registerCustomer']);
 Route::get('auth/verify-email', [API\AuthController::class, 'getVerifyEmail']);
 Route::post('auth/verify-email', [API\AuthController::class, 'verifyEmail']);
 Route::post('auth/verify-email-owner', [API\AuthController::class, 'verifyEmailOwner']);

@@ -18,16 +18,8 @@ class TableInfoService
             $status = true;
             switch ($ket) {
                 case 'user_id':
-                    $cafeManagement = Models\CafeManagement::select('id', 'user_id', 'cafe_id')->where(['user_id' => $id, 'status' => true])->first();
-                    if ($cafeManagement) {
-                        $message .= ' by CafeId';
-                        $result = Models\TableInfo::with('cafe')->where('cafe_id', $cafeManagement->cafe_id)->get();
-                        if(!$result) {
-                            $code = 404;
-                            $message = 'Data Not Found';
-                            $status = false;
-                        }
-                    } else {
+                    $result = Models\TableInfo::with('cafe')->where(['user_id' => $id, 'status' => false])->first();
+                    if(!$result) {
                         $code = 404;
                         $message = 'Data Not Found';
                         $status = false;

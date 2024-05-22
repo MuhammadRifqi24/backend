@@ -287,6 +287,10 @@ class UserService
                     $message = ' Pelayan';
                     //Notification::send($user, new Notifications\OwnerSendEmail($user, ['message' => $message, 'url' => $url]));
                     break;
+                case 'user':
+                    $message = ' User';
+                    //Notification::send($user, new Notifications\OwnerSendEmail($user, ['message' => $message, 'url' => $url]));
+                    break;
             }
 
             if ($level === "management") {
