@@ -36,11 +36,12 @@ Route::middleware(['auth:sanctum', 'checkVerifyEmail', 'checkRole:pelayan'])->gr
 // 1 Dine-in
 
 // Status order
-// 0 Pending (setelah dibuat order oleh pelayan atau customer)
-// 1 Accept (setelah diterima oleh pelayan atau dapur)
-// 2 Process (setelah diterima pesanannya oleh dapur)
-// 3 Finished (setelah pesanan selesai dibuat)
-// 4 Collected (setelah pesanan diambil oleh customer)
+// 0 Pending (setelah pesanan dibuat oleh pelayan atau customer)
+// 1 Accept (pesanan diterima oleh pelayan atau dapur)
+// 2 Process (pesanan diproses oleh dapur)
+// 3 Finished (pesanan selesai dibuat)
+// 4 Collected (pesanan sudah diambil oleh customer)
+// 5 Canceled (pesanan dibatalkan)
 
 // Status Payment
 // 0 Pending (Belum dibayar)

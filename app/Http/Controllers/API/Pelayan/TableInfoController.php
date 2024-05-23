@@ -22,7 +22,15 @@ class TableInfoController extends Controller
     public function index(Request $request): JsonResponse
     {
         $auth = $request->user();
-        $result = $this->tableInfoService->getDataByID($auth->id, 'user_id');
+        $cafe = $this->cafeService->getCafe($auth->id, 'get_info');
+        
+        if ($cafe['status'] == false) {
+            return $this->errorResponse($cafe['result'], $cafe['message'], $cafe['code']);
+        }
+
+        $cafe = $cafe['result'];
+
+        $result = $this->tableInfoService->getDataByID($cafe['cafe_id'], 'cafe_id');
         
         if ($result['status'] == false) {
             return $this->errorResponse($result['result'], $result['message'], $result['code']);

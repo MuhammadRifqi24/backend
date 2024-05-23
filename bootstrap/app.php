@@ -25,6 +25,7 @@ return Application::configure(basePath: dirname(__DIR__))
             Route::prefix('api/v1/dapur')->group(base_path('routes/roles/apiDapur.php'));
             Route::prefix('api/v1/stan')->group(base_path('routes/roles/apiStan.php'));
             Route::prefix('api/v1/owner')->group(base_path('routes/roles/apiOwner.php'));
+            Route::prefix('api/v1/user')->group(base_path('routes/roles/apiUser.php'));
         }
     )
     ->withMiddleware(function (Middleware $middleware) {
