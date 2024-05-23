@@ -19,4 +19,5 @@ Route::middleware(['auth:sanctum', 'checkVerifyEmail', 'checkRole:user'])->group
     Route::get('order/index', [User\OrderController::class, 'index']);
     Route::get('order/uuid/{uuid}', [User\OrderController::class, 'getByUUID']);
     Route::post('order/insert', [User\OrderController::class, 'insert']);
+    Route::post('order/cancel', [User\OrderController::class, 'cancel']);
 });

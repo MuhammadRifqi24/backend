@@ -101,4 +101,30 @@ class OrderController extends Controller
         
         return $this->successResponse($result['result'], $result['message'], $result['code']);
     }
+
+    public function cancel(Requests\User\CancelOrderRequest $request): JsonResponse
+    {
+        $checkData = $this->orderService->getDataByID($request->uuid, 'uuid');
+        if ($checkData['status'] == false) {
+            return $this->errorResponse($checkData['message'], $checkData['result'], $checkData['code']);
+        }
+        $checkData = $checkData['result'];
+
+        $auth = $request->user();
+        if ($checkData->user_id != $auth->id) {
+            $code = 404;
+            $message = 'Data Not Found';
+
+            return $this->errorResponse([], $message, $code);
+        }
+
+        $result = $this->orderService->updateOrderStatus([
+            'status' => 5,
+        ], $checkData->id);
+
+        if ($result['status'] == false) {
+            return $this->errorResponse($result['result'], $result['message'], $result['code']);
+        }
+        return $this->successResponse($result['result'], $result['message'], $result['code']);
+    }
 }
