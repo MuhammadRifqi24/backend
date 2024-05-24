@@ -191,4 +191,22 @@ class OrderController extends Controller
         }
         return $this->successResponse($result['result'], $result['message'], $result['code']);
     }
+
+    public function cancel(Requests\Pelayan\CancelOrderRequest $request): JsonResponse
+    {
+        $checkData = $this->orderService->getDataByID($request->uuid, 'uuid');
+        if ($checkData['status'] == false) {
+            return $this->errorResponse($checkData['message'], $checkData['result'], $checkData['code']);
+        }
+        $checkData = $checkData['result'];
+
+        $result = $this->orderService->updateOrderStatus([
+            'status' => 5,
+        ], $checkData->id);
+
+        if ($result['status'] == false) {
+            return $this->errorResponse($result['result'], $result['message'], $result['code']);
+        }
+        return $this->successResponse($result['result'], $result['message'], $result['code']);
+    }
 }

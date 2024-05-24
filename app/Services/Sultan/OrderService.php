@@ -248,9 +248,18 @@ class OrderService
             $order->status = $datas['status'];
             $order->save();
 
+            // check if has booked table
+            if($order->table_info_id != null) {
+                $table_info = Models\TableInfo::findOrFail($order->table_info_id);
+                $table_info->status = 1;
+                $table_info->user_id = null;
+                $table_info->save();
+            }
+
             $result = $order;
             $message = "Successfully Update Order Status";
             $status = true;
+
             DB::commit();
         } catch (\Throwable $e) {
             DB::rollBack();
