@@ -4,7 +4,6 @@ namespace App\Http\Controllers\API\Customer;
 
 // use App\Http\Controllers\Controller;
 use App\Http\Controllers\API\BaseController as Controller;
-
 use App\Services\CafeService;
 use App\Services\Rifqi\ProductService;
 use Illuminate\Http\JsonResponse;

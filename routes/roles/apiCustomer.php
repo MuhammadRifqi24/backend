@@ -12,7 +12,7 @@ Route::get('/', function () {
     ]);
 });
 
-Route::middleware(['auth:sanctum', 'checkVerifyEmail', 'checkRole:stan'])->group(function () {
+Route::middleware(['auth:sanctum', 'checkVerifyEmail', 'checkRole:customer'])->group(function () {
     Route::get('product/index', [ProductController::class, 'index']);
     Route::post('product/insert', [ProductController::class, 'insert']);
     Route::post('product/update', [ProductController::class, 'update']);
