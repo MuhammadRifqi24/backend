@@ -2,61 +2,117 @@
 
 namespace App\Http\Controllers\API\Owner;
 
-use App\Http\Controllers\API\BaseController as Controller;
-use App\Http\Requests\Owner\StoreProductRequest;
-// use App\Http\Controllers\Controller;
-use App\Services\CafeService;
-use App\Services\ProductService;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
 {
     protected $productService;
     protected $cafeService;
-    public function __construct(ProductService $productService, CafeService $cafeService)
+    public function __construct(Services\Fika\ProductService $productService, Services\CafeService $cafeService)
     {
         $this->productService = $productService;
         $this->cafeService = $cafeService;
     }
 
-    public function store(StoreProductRequest $request)
+    public function index(Request $request): JsonResponse
     {
-
         $auth = $request->user();
+        $result = $this->productService->getDataByID($auth->id, 'cafe_id');
+        if ($result['status'] == false) {
+            return $this->errorResponse($result['result'], $result['message'], $result['code']);
+        }
+
+        return $this->successResponse($result['result'], $result['message'], $result['code']);
+    }
+
+    public function insert(Requests\Owner\StoreProductRequest $request): JsonResponse
+    {
+        $auth = $request->user();
+
+        //* check cafe_management
         $cafe_management = $this->cafeService->getCafe($auth->id, 'get_info');
         if ($cafe_management['status'] == false) {
             return $this->errorResponse($cafe_management['result'], $cafe_management['message'], $cafe_management['code']);
         }
+        $cafe_management = $cafe_management['result'];
 
-        return $this->successResponse($cafe_management['result'], $cafe_management['message'], $cafe_management['code']);
+        $name_image = null;
+        if ($request->hasfile('image')) {
+            $file = $request->file('image');
+            $name_image = $cafe_management['cafe_id'] . '-product-' . $auth->id . '-' . time() . '.' . $file->getClientOriginalExtension();
+            $upload = FUS::uploadProduct($file, $name_image, '');
+            if ($upload['status'] === false) {
+                return $this->errorResponse($upload['result'], "Gagal Upload", 500);
+            }
+        }
 
-        // opsi -->
+        $result = $this->productService->insertData([
+            'cafe_id' => $cafe_management['cafe_id'],
+            'stan_id' => $cafe_management['stan_id'],
+            'category_id' => $request->category_id,
+            'name' => $request->name,
+            'image' => $name_image,
+            'description' => $request->description,
+            'harga_beli' => $request->harga_beli,
+            'harga_jual' => $request->harga_jual,
+            'is_stock' => $request->is_stock,
+            'qty' => $request->qty,
+            'status' => true
+        ]);
 
-        // $validator = Validator::make($request->all(), [
-        //     'category_id' => 'required|exists:categories,id',
-        //     'name' => 'required',
-        //     'image' => 'nullable|mimes:png,jpg,jpeg|max:10240', // Max:10MB
-        //     'harga_beli' => 'required|numeric',
-        //     'harga_jual' => 'required|numeric',
-        //     'is_stock' => 'required|boolean',
-        //     'qty' => 'required_if:is_stock,true'
-        // ], [
-        //     'category_id.required' => 'Kategori Harus di Isi',
-        //     'category_id.exists' => 'Kategori tidak terdeteksi',
-        //     'name.required' => 'Nama Harus di Isi',
-        //     'image.mimes' => 'Format Gambar tidak sesuai',
-        //     'harga_beli.required' => 'Harga Beli harus di Isi',
-        //     'harga_beli.numeric' => 'Harga Beli harus berupa Angka',
-        //     'harga_jual.required' => 'Harga Jual harus di Isi',
-        //     'harga_jual.numeric' => 'Harga Jual harus berupa Angka',
-        //     'is_stock.required' => 'Penentuan Stok harus di isi',
-        //     'is_stock.boolean' => 'Penentuan menggunakan Stok harus boolean (true / false)',
-        //     'qty.required_if' => 'Qty Stok harus diisi jika is_stock = true'
-        // ]);
+        if ($result['status'] == false) {
+            return $this->errorResponse($result['result'], $result['message'], $result['code']);
+        }
+        return $this->successResponse($result['result'], $result['message'], $result['code']);
+    }
 
-        // if ($validator->fails()) {
-        //     return $this->errorResponse('Validation Error.', $validator->errors(), 422);
-        // }
+    public function update(Requests\Owner\UpdateProductRequest $request): JsonResponse
+    {
+        $checkData = $this->productService->getDataByID($request->uuid, 'uuid');
+        if ($checkData['status'] == false) {
+            return $this->errorResponse($checkData['message'], $checkData['result'], $checkData['code']);
+        }
+        $checkData = $checkData['result'];
+
+        $auth = $request->user();
+        $name_image = $checkData->image;
+        if ($request->hasfile('image')) {
+            $file = $request->file('image');
+            $name_image = $checkData->cafe_id . '-product-' . $auth->id . '-' . time() . '.' . $file->getClientOriginalExtension();
+            $upload = FUS::uploadProduct($file, $name_image, $checkData->image);
+            if ($upload['status'] === false) {
+                return $this->errorResponse($upload['result'], "Gagal Upload", 500);
+            }
+        }
+
+        $result = $this->productService->updateData([
+            'category_id' => $request->category_id,
+            'name' => $request->name,
+            'image' => $name_image,
+            'description' => $request->description,
+            'harga_beli' => $request->harga_beli,
+            'harga_jual' => $request->harga_jual,
+            'status' => $request->status
+        ], $checkData->id);
+
+        if ($result['status'] == false) {
+            return $this->errorResponse($result['result'], $result['message'], $result['code']);
+        }
+        return $this->successResponse($result['result'], $result['message'], $result['code']);
+    }
+
+    public function destroy(Requests\Owner\DeleteProductRequest $request): JsonResponse
+    {
+        $checkData = $this->productService->getDataByID($request->uuid, 'uuid');
+        if ($checkData['status'] == false) {
+            return $this->errorResponse($checkData['result'], $checkData['message'], $checkData['code']);
+        }
+
+        $result = $this->productService->deleteData($request->uuid);
+        if ($result['status'] == false) {
+            return $this->errorResponse($result['result'], $result['message'], $result['code']);
+        }
+        return $this->successResponse($result['result'], $result['message'], $result['code']);
     }
 }

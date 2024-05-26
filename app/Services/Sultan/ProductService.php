@@ -41,7 +41,7 @@ class ProductService
                     }
                     break;
                 default:
-                    $result = Models\Product::findOrFail($id);
+                    $result = Models\Product::where('uuid', $id)->first();
                     break;
             }
         } catch (\Throwable $e) {
