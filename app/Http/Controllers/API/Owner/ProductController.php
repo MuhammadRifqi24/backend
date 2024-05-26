@@ -2,14 +2,18 @@
 
 namespace App\Http\Controllers\API\Owner;
 
-use App\Http\Controllers\Controller;
+use App\Services;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use App\Http\Controllers\API\BaseController as Controller;
+use App\Http\Requests;
+use App\Services\FileUploadService as FUS;
 
 class ProductController extends Controller
 {
     protected $productService;
     protected $cafeService;
-    public function __construct(Services\Fika\ProductService $productService, Services\CafeService $cafeService)
+    public function __construct(Services\ProductService $productService, Services\CafeService $cafeService)
     {
         $this->productService = $productService;
         $this->cafeService = $cafeService;
