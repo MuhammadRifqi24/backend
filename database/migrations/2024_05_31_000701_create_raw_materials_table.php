@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('image')->nullable();
             $table->longText('description')->nullable();
             $table->string('harga_beli')->default(0)->nullable();
+            $table->string('harga_jual')->default(0)->nullable();
             $table->boolean('is_stock')->default(false);
             $table->boolean('status')->default(false);
             $table->uuid('uuid');
