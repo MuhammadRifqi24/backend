@@ -31,4 +31,9 @@ Route::middleware(['auth:sanctum', 'checkVerifyEmail', 'checkRole:stan'])->group
     Route::post('raw-material-category/insert', [Stan\RawMaterialCategoryController::class, 'insert']);
     Route::post('raw-material-category/update', [Stan\RawMaterialCategoryController::class, 'update']);
     Route::delete('raw-material-category/delete', [Stan\RawMaterialCategoryController::class, 'destroy']);
+
+    Route::get('raw-material/index', [Stan\RawMaterialController::class, 'index']);
+    Route::post('raw-material/insert', [Stan\RawMaterialController::class, 'insert']);
+    Route::post('raw-material/update', [Stan\RawMaterialController::class, 'update']);
+    Route::delete('raw-material/delete', [Stan\RawMaterialController::class, 'destroy']);
 });
