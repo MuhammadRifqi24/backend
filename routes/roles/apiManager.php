@@ -29,4 +29,18 @@ Route::middleware(['auth:sanctum', 'checkVerifyEmail', 'checkRole:manager'])->gr
     Route::post('table-info/book-table', [Manager\TableInfoController::class, 'bookTable']);
     Route::post('table-info/finish-table', [Manager\TableInfoController::class, 'finishTable']);
     Route::delete('table-info/delete', [Manager\TableInfoController::class, 'destroy']);
+
+    Route::get('raw-material-category/index', [Manager\RawMaterialCategoryController::class, 'index']);
+    Route::get('raw-material-category/{uuid}', [Manager\RawMaterialCategoryController::class, 'find']);
+    Route::post('raw-material-category/insert', [Manager\RawMaterialCategoryController::class, 'insert']);
+    Route::post('raw-material-category/update', [Manager\RawMaterialCategoryController::class, 'update']);
+    Route::delete('raw-material-category/delete', [Manager\RawMaterialCategoryController::class, 'destroy']);
+
+    Route::get('raw-material/index', [Manager\RawMaterialController::class, 'index']);
+    Route::post('raw-material/insert', [Manager\RawMaterialController::class, 'insert']);
+    Route::post('raw-material/update', [Manager\RawMaterialController::class, 'update']);
+    Route::delete('raw-material/delete', [Manager\RawMaterialController::class, 'destroy']);
+
+    Route::post('raw-material-stock/increment/{uuid}', [Manager\RawMaterialStockController::class, 'incrementData']);
+    Route::post('raw-material-stock/decrement/{uuid}', [Manager\RawMaterialStockController::class, 'decrementData']);
 });
