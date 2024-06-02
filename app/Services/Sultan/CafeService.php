@@ -82,7 +82,7 @@ class CafeService
         $code = 200;
         $result = null;
         try {
-            $result = Models\CafeManagement::where('cafe_id', $cafeID)->get();
+            $result = Models\CafeManagement::with('cafe', 'user', 'userlevel')->where('cafe_id', $cafeID)->get();
             $message = 'Get Data Cafe Management';
             $status = true;
         } catch (\Throwable $e) {

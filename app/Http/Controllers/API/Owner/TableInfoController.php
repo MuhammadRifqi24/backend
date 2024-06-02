@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\API\Manager;
+namespace App\Http\Controllers\API\Owner;
 
 use App\Services;
 use Illuminate\Http\Request;
@@ -84,7 +84,7 @@ class TableInfoController extends Controller
         return $this->successResponse($result['result'], $result['message'], $result['code']);
     }
 
-    public function destroy(Requests\Pelayan\DeleteTableInfoRequest $request): JsonResponse
+    public function destroy(Request $request): JsonResponse
     {
         $checkData = $this->tableInfoService->getDataByID($request->uuid, 'uuid');
         if ($checkData['status'] == false) {

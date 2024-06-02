@@ -107,7 +107,7 @@ class ProductController extends Controller
         return $this->successResponse($result['result'], $result['message'], $result['code']);
     }
 
-    public function destroy(Requests\Stan\DeleteProductRequest $request): JsonResponse
+    public function destroy(Request $request): JsonResponse
     {
         $checkData = $this->productService->getDataByID($request->uuid, 'uuid');
         if ($checkData['status'] == false) {

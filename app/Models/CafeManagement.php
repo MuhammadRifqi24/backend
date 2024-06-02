@@ -29,4 +29,9 @@ class CafeManagement extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function userlevel()
+    {
+        return $this->belongsTo(UserLevel::class, 'userlevel_id');
+    }
 }
