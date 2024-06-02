@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Manager;
+namespace App\Http\Requests\Owner;
 
 use App\Traits\ApiResponser;
 use Illuminate\Foundation\Http\FormRequest;
@@ -24,14 +24,14 @@ class StoreTableInfoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'nullable',
+            'name' => 'required',
         ];
     }
 
     public function messages(): array
     {
         return [
-            
+            'name.required' => 'Nama Harus di Isi',
         ];
     }
 

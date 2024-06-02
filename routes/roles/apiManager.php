@@ -15,7 +15,7 @@ Route::middleware(['auth:sanctum', 'checkVerifyEmail', 'checkRole:manager'])->gr
     Route::get('product/index', [Manager\ProductController::class, 'index']);
     Route::post('product/insert', [Manager\ProductController::class, 'insert']);
     Route::post('product/update', [Manager\ProductController::class, 'update']);
-    Route::delete('product/delete', [Manager\ProductController::class, 'destroy']);
+    Route::delete('product/delete/{uuid}', [Manager\ProductController::class, 'destroy']);
 
     Route::post('stock/increment/{uuid}', [Manager\StockController::class, 'incrementData']);
     Route::post('stock/decrement/{uuid}', [Manager\StockController::class, 'decrementData']);

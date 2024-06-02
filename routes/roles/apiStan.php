@@ -15,7 +15,7 @@ Route::middleware(['auth:sanctum', 'checkVerifyEmail', 'checkRole:stan'])->group
     Route::get('product/index', [Stan\ProductController::class, 'index']);
     Route::post('product/insert', [Stan\ProductController::class, 'insert']);
     Route::post('product/update', [Stan\ProductController::class, 'update']);
-    Route::delete('product/delete', [Stan\ProductController::class, 'destroy']);
+    Route::delete('product/delete/{uuid}', [Stan\ProductController::class, 'destroy']);
 
     Route::post('stock/increment/{uuid}', [Stan\StockController::class, 'incrementData']);
     Route::post('stock/decrement/{uuid}', [Stan\StockController::class, 'decrementData']);

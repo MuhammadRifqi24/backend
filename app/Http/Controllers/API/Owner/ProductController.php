@@ -2,14 +2,18 @@
 
 namespace App\Http\Controllers\API\Owner;
 
-use App\Http\Controllers\Controller;
+use App\Services;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use App\Http\Controllers\API\BaseController as Controller;
+use App\Http\Requests;
+use App\Services\FileUploadService as FUS;
 
 class ProductController extends Controller
 {
     protected $productService;
     protected $cafeService;
-    public function __construct(Services\Fika\ProductService $productService, Services\CafeService $cafeService)
+    public function __construct(Services\ProductService $productService, Services\CafeService $cafeService)
     {
         $this->productService = $productService;
         $this->cafeService = $cafeService;
@@ -26,7 +30,17 @@ class ProductController extends Controller
         return $this->successResponse($result['result'], $result['message'], $result['code']);
     }
 
-    public function insert(Requests\Owner\StoreProductRequest $request): JsonResponse
+    public function getByUUID(Request $request): JsonResponse
+    {
+        $result = $this->productService->getDataByID($request->uuid, 'uuid');
+        if ($result['status'] == false) {
+            return $this->errorResponse($result['result'], $result['message'], $result['code']);
+        }
+
+        return $this->successResponse($result['result'], $result['message'], $result['code']);
+    }
+
+    public function insert(Requests\Manager\StoreProductRequest $request): JsonResponse
     {
         $auth = $request->user();
 
@@ -102,7 +116,7 @@ class ProductController extends Controller
         return $this->successResponse($result['result'], $result['message'], $result['code']);
     }
 
-    public function destroy(Requests\Owner\DeleteProductRequest $request): JsonResponse
+    public function destroy(Request $request): JsonResponse
     {
         $checkData = $this->productService->getDataByID($request->uuid, 'uuid');
         if ($checkData['status'] == false) {
