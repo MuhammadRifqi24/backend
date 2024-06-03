@@ -30,7 +30,8 @@ Route::middleware(['auth:sanctum', 'checkVerifyEmail', 'checkRole:owner'])->grou
     Route::get('raw-material-category/{uuid}', [Owner\RawMaterialCategoryController::class, 'find']);
     Route::post('raw-material-category/insert', [Owner\RawMaterialCategoryController::class, 'insert']);
     Route::post('raw-material-category/update', [Owner\RawMaterialCategoryController::class, 'update']);
-    Route::delete('raw-material-category/delete', [Owner\RawMaterialCategoryController::class, 'destroy']);
+    Route::delete('raw-material-category/delete/{uuid}', [Owner\RawMaterialCategoryController::class, 'destroy']);
+    Route::get('raw-material-category/view/{uuid}', [Owner\RawMaterialCategoryController::class, 'getByUUID']);
 
     Route::get('raw-material/index', [Owner\RawMaterialController::class, 'index']);
     Route::post('raw-material/insert', [Owner\RawMaterialController::class, 'insert']);

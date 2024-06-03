@@ -27,7 +27,7 @@ return new class extends Migration
             $table->timestamps();
             $table->foreign('cafe_id')->references('id')->on('cafes');
             $table->foreign('stan_id')->references('id')->on('stans');
-            $table->foreign('raw_material_category_id')->references('id')->on('raw_material_categories');
+            $table->foreign('raw_material_category_id')->references('id')->on('raw_material_categories')->onDelete('restrict');;
         });
     }
 
