@@ -2,7 +2,7 @@
 
 namespace App\Services\Sultan;
 
-use App\Models\RawMaterialCategory;
+use App\Models;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 
@@ -16,11 +16,22 @@ class RawMaterialCategoryService
         try {
             $message = "Get data Raw Material Category";
             switch ($ket) {
+                case 'cafe_id':
+                    $cafeManagement = Models\CafeManagement::select('id', 'user_id', 'cafe_id')->where(['user_id' => $id, 'status' => true])->first();
+                    if ($cafeManagement) {
+                        $message .= ' by CafeId';
+                        $result = Models\RawMaterialCategory::with('cafe')->where('cafe_id', $cafeManagement->cafe_id)->get();
+                    } else {
+                        $code = 404;
+                        $message = 'Data Not Found';
+                        $status = false;
+                    }
+                    break;
                 case 'uuid':
-                    $result = RawMaterialCategory::where('uuid', $id)->first();
+                    $result = Models\RawMaterialCategory::where('uuid', $id)->first();
                     break;
                 default:
-                    $result = RawMaterialCategory::findOrFail($id);
+                    $result = Models\RawMaterialCategory::findOrFail($id);
                     break;
             }
 
@@ -49,7 +60,7 @@ class RawMaterialCategoryService
         $result = null;
         try {
             $message = "Get All data Raw Material Category";
-            $result = RawMaterialCategory::all();
+            $result = Models\RawMaterialCategory::all();
 
             $status = true;
         } catch (\Throwable $e) {
@@ -78,14 +89,15 @@ class RawMaterialCategoryService
         try {
             $uuid = Str::uuid()->getHex()->toString();
 
-            $product = new RawMaterialCategory();
-            $product->name  = $datas['name'];
-            $product->description = $datas['description'];
-            $product->status = $datas['status'];
-            $product->uuid = $uuid;
-            $product->save();
+            $rawMaterialCategory = new Models\RawMaterialCategory();
+            $rawMaterialCategory->name  = $datas['name'];
+            $rawMaterialCategory->cafe_id  = $datas['cafe_id'];
+            $rawMaterialCategory->description = $datas['description'];
+            $rawMaterialCategory->status = $datas['status'];
+            $rawMaterialCategory->uuid = $uuid;
+            $rawMaterialCategory->save();
 
-            $result = $product;
+            $result = $rawMaterialCategory;
             $message = "Successfully insert Raw Material Category";
             $status = true;
             $code = 201;
@@ -115,7 +127,7 @@ class RawMaterialCategoryService
         $result = null;
         DB::beginTransaction();
         try {
-            $result = RawMaterialCategory::findOrFail($id);
+            $result = Models\RawMaterialCategory::findOrFail($id);
             $result->name  = $datas['name'];
             $result->description = $datas['description'];
             $result->status = $datas['status'];
@@ -149,7 +161,7 @@ class RawMaterialCategoryService
         $result = null;
         $message = '';
         try {
-            $category = RawMaterialCategory::where('uuid', $uuid)->first();
+            $category = Models\RawMaterialCategory::where('uuid', $uuid)->first();
             if ($category) {
                 $category->delete();
                 $status = true;

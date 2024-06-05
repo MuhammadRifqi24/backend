@@ -13,11 +13,13 @@ return new class extends Migration
     {
         Schema::create('raw_material_categories', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('cafe_id');
             $table->string('name');
             $table->text('description')->nullable();
             $table->boolean('status')->default(false);
             $table->uuid('uuid');
             $table->timestamps();
+            $table->foreign('cafe_id')->references('id')->on('cafes');
         });
     }
 
