@@ -44,4 +44,10 @@ Route::middleware(['auth:sanctum', 'checkVerifyEmail', 'checkRole:owner'])->grou
 
     Route::post('raw-material-stock/increment/{uuid}', [Owner\RawMaterialStockController::class, 'incrementData']);
     Route::post('raw-material-stock/decrement/{uuid}', [Owner\RawMaterialStockController::class, 'decrementData']);
+
+    Route::get('category/index', [Owner\CategoryController::class, 'index']);
+    Route::post('category/insert', [Owner\CategoryController::class, 'insert']);
+    Route::post('category/update', [Owner\CategoryController::class, 'update']);
+    Route::delete('category/delete/{uuid}', [Owner\CategoryController::class, 'destroy']);
+    Route::get('category/view/{uuid}', [Owner\CategoryController::class, 'getByUUID']);
 });
