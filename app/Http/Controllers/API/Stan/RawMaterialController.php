@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\API\Manager;
+namespace App\Http\Controllers\API\Stan;
 
 use App\Services;
 use Illuminate\Http\Request;
@@ -9,20 +9,21 @@ use App\Http\Controllers\API\BaseController as Controller;
 use App\Http\Requests;
 use App\Services\FileUploadService as FUS;
 
-class ProductController extends Controller
+class RawMaterialController extends Controller
 {
-    protected $productService;
+    protected $rawMaterial;
     protected $cafeService;
-    public function __construct(Services\ProductService $productService, Services\CafeService $cafeService)
+
+    public function __construct(Services\Sultan\RawMaterialService $rawMaterial, Services\CafeService $cafeService)
     {
-        $this->productService = $productService;
+        $this->rawMaterial = $rawMaterial;
         $this->cafeService = $cafeService;
     }
 
     public function index(Request $request): JsonResponse
     {
         $auth = $request->user();
-        $result = $this->productService->getDataByID($auth->id, 'cafe_id');
+        $result = $this->rawMaterial->getDataByID($auth->id, 'cafe_id');
         if ($result['status'] == false) {
             return $this->errorResponse($result['result'], $result['message'], $result['code']);
         }
@@ -30,7 +31,7 @@ class ProductController extends Controller
         return $this->successResponse($result['result'], $result['message'], $result['code']);
     }
 
-    public function insert(Requests\Manager\StoreProductRequest $request): JsonResponse
+    public function insert(Requests\Stan\StoreRawMaterialRequest $request): JsonResponse
     {
         $auth = $request->user();
 
@@ -44,17 +45,17 @@ class ProductController extends Controller
         $name_image = null;
         if ($request->hasfile('image')) {
             $file = $request->file('image');
-            $name_image = $cafe_management['cafe_id'] . '-product-' . $auth->id . '-' . time() . '.' . $file->getClientOriginalExtension();
-            $upload = FUS::uploadProduct($file, $name_image, '');
+            $name_image = $cafe_management['cafe_id'] . '-rawmaterial-' . $auth->id . '-' . time() . '.' . $file->getClientOriginalExtension();
+            $upload = FUS::uploadRawMaterial($file, $name_image, '');
             if ($upload['status'] === false) {
                 return $this->errorResponse($upload['result'], "Gagal Upload", 500);
             }
         }
 
-        $result = $this->productService->insertData([
+        $result = $this->rawMaterial->insertData([
             'cafe_id' => $cafe_management['cafe_id'],
             'stan_id' => $cafe_management['stan_id'],
-            'category_id' => $request->category_id,
+            'raw_material_category_id' => $request->raw_material_category_id,
             'name' => $request->name,
             'image' => $name_image,
             'description' => $request->description,
@@ -71,9 +72,9 @@ class ProductController extends Controller
         return $this->successResponse($result['result'], $result['message'], $result['code']);
     }
 
-    public function update(Requests\Manager\UpdateProductRequest $request): JsonResponse
+    public function update(Requests\Stan\UpdateRawMaterialRequest $request): JsonResponse
     {
-        $checkData = $this->productService->getDataByID($request->uuid, 'uuid');
+        $checkData = $this->rawMaterial->getDataByID($request->uuid, 'uuid');
         if ($checkData['status'] == false) {
             return $this->errorResponse($checkData['message'], $checkData['result'], $checkData['code']);
         }
@@ -83,15 +84,15 @@ class ProductController extends Controller
         $name_image = $checkData->image;
         if ($request->hasfile('image')) {
             $file = $request->file('image');
-            $name_image = $checkData->cafe_id . '-product-' . $auth->id . '-' . time() . '.' . $file->getClientOriginalExtension();
-            $upload = FUS::uploadProduct($file, $name_image, $checkData->image);
+            $name_image = $checkData->cafe_id . '-rawmaterial-' . $auth->id . '-' . time() . '.' . $file->getClientOriginalExtension();
+            $upload = FUS::uploadRawMaterial($file, $name_image, $checkData->image);
             if ($upload['status'] === false) {
                 return $this->errorResponse($upload['result'], "Gagal Upload", 500);
             }
         }
 
-        $result = $this->productService->updateData([
-            'category_id' => $request->category_id,
+        $result = $this->rawMaterial->updateData([
+            'raw_material_category_id' => $request->raw_material_category_id,
             'name' => $request->name,
             'image' => $name_image,
             'description' => $request->description,
@@ -106,14 +107,14 @@ class ProductController extends Controller
         return $this->successResponse($result['result'], $result['message'], $result['code']);
     }
 
-    public function destroy(Request $request): JsonResponse
+    public function destroy(Requests\Stan\DeleteRawMaterialRequest $request): JsonResponse
     {
-        $checkData = $this->productService->getDataByID($request->uuid, 'uuid');
+        $checkData = $this->rawMaterial->getDataByID($request->uuid, 'uuid');
         if ($checkData['status'] == false) {
             return $this->errorResponse($checkData['result'], $checkData['message'], $checkData['code']);
         }
 
-        $result = $this->productService->deleteData($request->uuid);
+        $result = $this->rawMaterial->deleteData($request->uuid);
         if ($result['status'] == false) {
             return $this->errorResponse($result['result'], $result['message'], $result['code']);
         }

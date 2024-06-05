@@ -7,7 +7,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class StoreTableInfoRequest extends FormRequest
+class StoreRawMaterialCategoryRequest extends FormRequest
 {
     use ApiResponser;
 
@@ -24,14 +24,16 @@ class StoreTableInfoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'nullable',
+            'name' => 'required',
+            'description' => 'required'
         ];
     }
 
     public function messages(): array
     {
         return [
-            
+            'name.required' => 'Nama Harus di Isi',
+            'description.required' => 'Description Harus di Isi',
         ];
     }
 

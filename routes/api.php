@@ -25,4 +25,7 @@ Route::middleware(['auth:sanctum', 'checkVerifyEmail'])->group(function () {
     Route::post('auth/register-pelayan', [API\RegisterController::class, 'registerPelayan'])->middleware('checkRole:owner');
     Route::post('auth/register-dapur', [API\RegisterController::class, 'registerDapur'])->middleware('checkRole:owner');
     Route::post('auth/register-stan', [API\RegisterController::class, 'registerStan'])->middleware('checkRole:owner,admin');
+
+    Route::get('raw-material-category/index', [API\RawMaterialCategoryController::class, 'index']);
+    Route::get('category/index', [API\CategoryController::class, 'index']);
 });
