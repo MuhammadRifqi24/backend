@@ -2,7 +2,7 @@
 
 namespace App\Services\Sultan;
 
-use App\Models\Category;
+use App\Models;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 
@@ -17,12 +17,24 @@ class CategoryService
         try {
             $message = "Get data Category";
             switch ($ket) {
+                case 'cafe_id':
+                    $cafeManagement = Models\CafeManagement::select('id', 'user_id', 'cafe_id')->where(['user_id' => $id, 'status' => true])->first();
+                    if ($cafeManagement) {
+                        $message .= ' by CafeId';
+                        $result = Models\Category::with('cafe')->where('cafe_id', $cafeManagement->cafe_id)->get();
+                    } else {
+                        $code = 404;
+                        $message = 'Data Not Found';
+                        $status = false;
+                    }
+                    break;
+
                 case 'uuid':
-                    $result = Category::where('uuid', $id)->first();
+                    $result = Models\Category::where('uuid', $id)->first();
                     break;
 
                 default:
-                    $result = Category::findOrFail($id);
+                    $result = Models\Category::findOrFail($id);
                     break;
             }
 
@@ -51,7 +63,7 @@ class CategoryService
         $result = null;
         try {
             $message = "Get All data Category";
-            $result = Category::all();
+            $result = Models\Category::all();
 
             $status = true;
         } catch (\Throwable $e) {
@@ -80,7 +92,8 @@ class CategoryService
         try {
             $uuid = Str::uuid()->getHex()->toString();
 
-            $product = new Category();
+            $product = new Models\Category();
+            $product->cafe_id  = $datas['cafe_id'];
             $product->name  = $datas['name'];
             $product->description = $datas['description'];
             $product->status = $datas['status'];
@@ -117,7 +130,7 @@ class CategoryService
         $result = null;
         DB::beginTransaction();
         try {
-            $result = Category::findOrFail($id);
+            $result = Models\Category::findOrFail($id);
             $result->name  = $datas['name'];
             $result->description = $datas['description'];
             $result->status = $datas['status'];
@@ -151,7 +164,7 @@ class CategoryService
         $result = null;
         $message = '';
         try {
-            $category = Category::where('uuid', $uuid)->first();
+            $category = Models\Category::where('uuid', $uuid)->first();
             if ($category) {
                 $category->delete();
                 $status = true;
