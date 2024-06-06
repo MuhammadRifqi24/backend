@@ -26,6 +26,7 @@ return Application::configure(basePath: dirname(__DIR__))
             Route::prefix('api/v1/stan')->group(base_path('routes/roles/apiStan.php'));
             Route::prefix('api/v1/owner')->group(base_path('routes/roles/apiOwner.php'));
             Route::prefix('api/v1/user')->group(base_path('routes/roles/apiUser.php'));
+            Route::prefix('api/v1/admin')->group(base_path('routes/roles/apiAdmin.php'));
         }
     )
     ->withMiddleware(function (Middleware $middleware) {

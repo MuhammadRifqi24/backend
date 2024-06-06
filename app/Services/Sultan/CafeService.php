@@ -166,4 +166,37 @@ class CafeService
             'result' => $result
         ];
     }
+
+    public function updateCafeStatus($datas = [], $cafe_id)
+    {
+        $status = false;
+        $code = 200;
+        $result = null;
+        DB::beginTransaction();
+        try {
+            $cafe = Models\Cafe::findOrFail($cafe_id);
+            $cafe->status = $datas['status'];
+            $cafe->save();
+
+            $result = $cafe;
+            $message = "Successfully Update Cafe Status";
+            $status = true;
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            $code = $e->getCode();
+            $message = $e->getMessage();
+            $result = [
+                'get_file' => $e->getFile(),
+                'get_line' => $e->getLine()
+            ];
+        }
+
+        return [
+            'code' => $code,
+            'status' => $status,
+            'message' => $message,
+            'result' => $result
+        ];
+    }
 }
