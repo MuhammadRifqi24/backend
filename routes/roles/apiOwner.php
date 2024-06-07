@@ -50,4 +50,7 @@ Route::middleware(['auth:sanctum', 'checkVerifyEmail', 'checkRole:owner'])->grou
     Route::post('category/update', [Owner\CategoryController::class, 'update']);
     Route::delete('category/delete/{uuid}', [Owner\CategoryController::class, 'destroy']);
     Route::get('category/view/{uuid}', [Owner\CategoryController::class, 'getByUUID']);
+
+    Route::get('order/index', [Owner\OrderController::class, 'index']);
+    Route::get('order/view/{uuid}', [Owner\OrderController::class, 'getByUUID']);
 });

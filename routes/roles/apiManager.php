@@ -43,4 +43,7 @@ Route::middleware(['auth:sanctum', 'checkVerifyEmail', 'checkRole:manager'])->gr
 
     Route::post('raw-material-stock/increment/{uuid}', [Manager\RawMaterialStockController::class, 'incrementData']);
     Route::post('raw-material-stock/decrement/{uuid}', [Manager\RawMaterialStockController::class, 'decrementData']);
+
+    Route::get('order/index', [Manager\OrderController::class, 'index']);
+    Route::get('order/view/{uuid}', [Manager\OrderController::class, 'getByUUID']);
 });
