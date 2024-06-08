@@ -22,6 +22,7 @@ Route::middleware(['auth:sanctum', 'checkVerifyEmail', 'checkRole:manager'])->gr
 
     Route::get('cafe/index', [Manager\CafeController::class, 'index']);
     Route::post('cafe/update', [Manager\CafeController::class, 'update']);
+    Route::get('cafe/management', [Manager\CafeController::class, 'management']);
 
     Route::get('table-info/index', [Manager\TableInfoController::class, 'index']);
     Route::post('table-info/insert', [Manager\TableInfoController::class, 'insert']);
