@@ -7,20 +7,22 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\API\BaseController as Controller;
 use App\Http\Requests;
-use App\Services\FileUploadService as FUS;
 
 class CategoryController extends Controller
 {
     protected $categoryService;
+    protected $cafeService;
 
-    public function __construct(Services\Sultan\CategoryService $categoryService)
+    public function __construct(Services\Sultan\CategoryService $categoryService, Services\Sultan\CafeService $cafeService)
     {
         $this->categoryService = $categoryService;
+        $this->cafeService = $cafeService;
     }
 
     public function index(Request $request): JsonResponse
     {
-        $result = $this->categoryService->getData();
+        $auth = $request->user();
+        $result = $this->categoryService->getDataByID($auth->id, 'cafe_id');
         if ($result['status'] == false) {
             return $this->errorResponse($result['result'], $result['message'], $result['code']);
         }
@@ -28,19 +30,18 @@ class CategoryController extends Controller
         return $this->successResponse($result['result'], $result['message'], $result['code']);
     }
 
-    public function find($uuid): JsonResponse
+    public function insert(Requests\Manager\StoreCategoryRequest $request): JsonResponse
     {
-        $result = $this->categoryService->getDataByID($uuid, 'uuid');
-        if ($result['status'] == false) {
-            return $this->errorResponse($result['result'], $result['message'], $result['code']);
+        $auth = $request->user();
+        //* check cafe_management
+        $cafe_management = $this->cafeService->getCafe($auth->id, 'get_info');
+        if ($cafe_management['status'] == false) {
+            return $this->errorResponse($cafe_management['result'], $cafe_management['message'], $cafe_management['code']);
         }
-
-        return $this->successResponse($result['result'], $result['message'], $result['code']);
-    }
-
-    public function insert(Requests\Stan\StoreCategoryRequest $request): JsonResponse
-    {
+        $cafe_management = $cafe_management['result'];
+        
         $result = $this->categoryService->insertData([
+            'cafe_id' => $cafe_management['cafe_id'],
             'name' => $request->name,
             'description' => $request->description,
             'status' => true
@@ -52,7 +53,7 @@ class CategoryController extends Controller
         return $this->successResponse($result['result'], $result['message'], $result['code']);
     }
 
-    public function update(Requests\Stan\UpdateCategoryRequest $request): JsonResponse
+    public function update(Requests\Manager\UpdateCategoryRequest $request): JsonResponse
     {
         $checkData = $this->categoryService->getDataByID($request->uuid, 'uuid');
         if ($checkData['status'] == false) {
@@ -72,7 +73,7 @@ class CategoryController extends Controller
         return $this->successResponse($result['result'], $result['message'], $result['code']);
     }
 
-    public function destroy(Requests\Stan\DeleteCategoryRequest $request): JsonResponse
+    public function destroy(Request $request): JsonResponse
     {
         $checkData = $this->categoryService->getDataByID($request->uuid, 'uuid');
         if ($checkData['status'] == false) {
@@ -83,6 +84,16 @@ class CategoryController extends Controller
         if ($result['status'] == false) {
             return $this->errorResponse($result['result'], $result['message'], $result['code']);
         }
+        return $this->successResponse($result['result'], $result['message'], $result['code']);
+    }
+
+    public function getByUUID(Request $request): JsonResponse
+    {
+        $result = $this->categoryService->getDataByID($request->uuid, 'uuid');
+        if ($result['status'] == false) {
+            return $this->errorResponse($result['result'], $result['message'], $result['code']);
+        }
+
         return $this->successResponse($result['result'], $result['message'], $result['code']);
     }
 }
