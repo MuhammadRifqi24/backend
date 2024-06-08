@@ -22,6 +22,7 @@ Route::middleware(['auth:sanctum', 'checkVerifyEmail', 'checkRole:manager'])->gr
 
     Route::get('cafe/index', [Manager\CafeController::class, 'index']);
     Route::post('cafe/update', [Manager\CafeController::class, 'update']);
+    Route::get('cafe/management', [Manager\CafeController::class, 'management']);
 
     Route::get('table-info/index', [Manager\TableInfoController::class, 'index']);
     Route::post('table-info/insert', [Manager\TableInfoController::class, 'insert']);
@@ -34,7 +35,8 @@ Route::middleware(['auth:sanctum', 'checkVerifyEmail', 'checkRole:manager'])->gr
     Route::get('raw-material-category/{uuid}', [Manager\RawMaterialCategoryController::class, 'find']);
     Route::post('raw-material-category/insert', [Manager\RawMaterialCategoryController::class, 'insert']);
     Route::post('raw-material-category/update', [Manager\RawMaterialCategoryController::class, 'update']);
-    Route::delete('raw-material-category/delete', [Manager\RawMaterialCategoryController::class, 'destroy']);
+    Route::delete('raw-material-category/delete/{uuid}', [Manager\RawMaterialCategoryController::class, 'destroy']);
+    Route::get('raw-material-category/view/{uuid}', [Manager\RawMaterialCategoryController::class, 'getByUUID']);
 
     Route::get('raw-material/index', [Manager\RawMaterialController::class, 'index']);
     Route::post('raw-material/insert', [Manager\RawMaterialController::class, 'insert']);
@@ -46,4 +48,10 @@ Route::middleware(['auth:sanctum', 'checkVerifyEmail', 'checkRole:manager'])->gr
 
     Route::get('order/index', [Manager\OrderController::class, 'index']);
     Route::get('order/view/{uuid}', [Manager\OrderController::class, 'getByUUID']);
+
+    Route::get('category/index', [Manager\CategoryController::class, 'index']);
+    Route::post('category/insert', [Manager\CategoryController::class, 'insert']);
+    Route::post('category/update', [Manager\CategoryController::class, 'update']);
+    Route::delete('category/delete/{uuid}', [Manager\CategoryController::class, 'destroy']);
+    Route::get('category/view/{uuid}', [Manager\CategoryController::class, 'getByUUID']);
 });
