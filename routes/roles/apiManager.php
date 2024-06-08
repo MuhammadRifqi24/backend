@@ -13,6 +13,7 @@ Route::get('/', function () {
 
 Route::middleware(['auth:sanctum', 'checkVerifyEmail', 'checkRole:manager'])->group(function () {
     Route::get('product/index', [Manager\ProductController::class, 'index']);
+    Route::get('product/view/{uuid}', [Manager\ProductController::class, 'getByUUID']);
     Route::post('product/insert', [Manager\ProductController::class, 'insert']);
     Route::post('product/update', [Manager\ProductController::class, 'update']);
     Route::delete('product/delete/{uuid}', [Manager\ProductController::class, 'destroy']);
@@ -41,7 +42,8 @@ Route::middleware(['auth:sanctum', 'checkVerifyEmail', 'checkRole:manager'])->gr
     Route::get('raw-material/index', [Manager\RawMaterialController::class, 'index']);
     Route::post('raw-material/insert', [Manager\RawMaterialController::class, 'insert']);
     Route::post('raw-material/update', [Manager\RawMaterialController::class, 'update']);
-    Route::delete('raw-material/delete', [Manager\RawMaterialController::class, 'destroy']);
+    Route::delete('raw-material/delete/{uuid}', [Manager\RawMaterialController::class, 'destroy']);
+    Route::get('raw-material/view/{uuid}', [Manager\RawMaterialController::class, 'getByUUID']);
 
     Route::post('raw-material-stock/increment/{uuid}', [Manager\RawMaterialStockController::class, 'incrementData']);
     Route::post('raw-material-stock/decrement/{uuid}', [Manager\RawMaterialStockController::class, 'decrementData']);
