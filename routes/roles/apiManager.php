@@ -35,7 +35,8 @@ Route::middleware(['auth:sanctum', 'checkVerifyEmail', 'checkRole:manager'])->gr
     Route::get('raw-material-category/{uuid}', [Manager\RawMaterialCategoryController::class, 'find']);
     Route::post('raw-material-category/insert', [Manager\RawMaterialCategoryController::class, 'insert']);
     Route::post('raw-material-category/update', [Manager\RawMaterialCategoryController::class, 'update']);
-    Route::delete('raw-material-category/delete', [Manager\RawMaterialCategoryController::class, 'destroy']);
+    Route::delete('raw-material-category/delete/{uuid}', [Manager\RawMaterialCategoryController::class, 'destroy']);
+    Route::get('raw-material-category/view/{uuid}', [Manager\RawMaterialCategoryController::class, 'getByUUID']);
 
     Route::get('raw-material/index', [Manager\RawMaterialController::class, 'index']);
     Route::post('raw-material/insert', [Manager\RawMaterialController::class, 'insert']);
