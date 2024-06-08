@@ -25,12 +25,16 @@ Route::middleware(['auth:sanctum', 'checkVerifyEmail', 'checkRole:manager'])->gr
     Route::post('cafe/update', [Manager\CafeController::class, 'update']);
     Route::get('cafe/management', [Manager\CafeController::class, 'management']);
 
-    Route::get('table-info/index', [Manager\TableInfoController::class, 'index']);
-    Route::post('table-info/insert', [Manager\TableInfoController::class, 'insert']);
-    Route::post('table-info/update', [Manager\TableInfoController::class, 'update']);
-    Route::post('table-info/book-table', [Manager\TableInfoController::class, 'bookTable']);
-    Route::post('table-info/finish-table', [Manager\TableInfoController::class, 'finishTable']);
-    Route::delete('table-info/delete', [Manager\TableInfoController::class, 'destroy']);
+    // Route::get('table-info/index', [Manager\TableInfoController::class, 'index']);
+    // Route::post('table-info/insert', [Manager\TableInfoController::class, 'insert']);
+    // Route::post('table-info/update', [Manager\TableInfoController::class, 'update']);
+    // Route::post('table-info/book-table', [Manager\TableInfoController::class, 'bookTable']);
+    // Route::post('table-info/finish-table', [Manager\TableInfoController::class, 'finishTable']);
+    // Route::delete('table-info/delete', [Manager\TableInfoController::class, 'destroy']);
+
+    Route::get('table/index', [Manager\TableInfoController::class, 'index']);
+    Route::post('table/insert', [Manager\TableInfoController::class, 'insert']);
+    Route::delete('table/delete/{uuid}', [Manager\TableInfoController::class, 'destroy']);
 
     Route::get('raw-material-category/index', [Manager\RawMaterialCategoryController::class, 'index']);
     Route::get('raw-material-category/{uuid}', [Manager\RawMaterialCategoryController::class, 'find']);
