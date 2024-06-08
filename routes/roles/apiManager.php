@@ -47,4 +47,10 @@ Route::middleware(['auth:sanctum', 'checkVerifyEmail', 'checkRole:manager'])->gr
 
     Route::get('order/index', [Manager\OrderController::class, 'index']);
     Route::get('order/view/{uuid}', [Manager\OrderController::class, 'getByUUID']);
+
+    Route::get('category/index', [Manager\CategoryController::class, 'index']);
+    Route::post('category/insert', [Manager\CategoryController::class, 'insert']);
+    Route::post('category/update', [Manager\CategoryController::class, 'update']);
+    Route::delete('category/delete/{uuid}', [Manager\CategoryController::class, 'destroy']);
+    Route::get('category/view/{uuid}', [Manager\CategoryController::class, 'getByUUID']);
 });
