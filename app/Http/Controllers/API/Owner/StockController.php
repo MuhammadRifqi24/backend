@@ -18,7 +18,7 @@ class StockController extends Controller
         $this->productService = $productService;
     }
 
-    public function incrementData(Requests\Manager\StoreStockRequest $request, $uuid): JsonResponse
+    public function incrementData(Requests\Owner\StoreStockRequest $request, $uuid): JsonResponse
     {
         $product = $this->productService->getDataByID($uuid, 'stock');
         if ($product['status'] == false) {
@@ -35,7 +35,7 @@ class StockController extends Controller
         return $this->successResponse($result['result'], $result['message'], $result['code']);
     }
 
-    public function decrementData(Requests\Manager\StoreStockRequest $request, $uuid): JsonResponse
+    public function decrementData(Requests\Owner\StoreStockRequest $request, $uuid): JsonResponse
     {
         $product = $this->productService->getDataByID($uuid);
         if ($product['status'] == false) {

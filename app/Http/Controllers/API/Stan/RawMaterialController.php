@@ -31,6 +31,16 @@ class RawMaterialController extends Controller
         return $this->successResponse($result['result'], $result['message'], $result['code']);
     }
 
+    public function getByUUID(Request $request): JsonResponse
+    {
+        $result = $this->rawMaterial->getDataByID($request->uuid, 'uuid');
+        if ($result['status'] == false) {
+            return $this->errorResponse($result['result'], $result['message'], $result['code']);
+        }
+
+        return $this->successResponse($result['result'], $result['message'], $result['code']);
+    }
+
     public function insert(Requests\Stan\StoreRawMaterialRequest $request): JsonResponse
     {
         $auth = $request->user();
@@ -107,7 +117,7 @@ class RawMaterialController extends Controller
         return $this->successResponse($result['result'], $result['message'], $result['code']);
     }
 
-    public function destroy(Requests\Stan\DeleteRawMaterialRequest $request): JsonResponse
+    public function destroy(Request $request): JsonResponse
     {
         $checkData = $this->rawMaterial->getDataByID($request->uuid, 'uuid');
         if ($checkData['status'] == false) {

@@ -40,7 +40,7 @@ class RawMaterialCategoryController extends Controller
         return $this->successResponse($result['result'], $result['message'], $result['code']);
     }
 
-    public function insert(Requests\Owner\StoreRawMaterialCategoryRequest $request): JsonResponse
+    public function insert(Requests\Stan\StoreRawMaterialCategoryRequest $request): JsonResponse
     {
         $auth = $request->user();
         //* check cafe_management
@@ -49,7 +49,7 @@ class RawMaterialCategoryController extends Controller
             return $this->errorResponse($cafe_management['result'], $cafe_management['message'], $cafe_management['code']);
         }
         $cafe_management = $cafe_management['result'];
-        
+
         $result = $this->rawMaterialCategoryService->insertData([
             'cafe_id' => $cafe_management['cafe_id'],
             'name' => $request->name,
@@ -63,7 +63,7 @@ class RawMaterialCategoryController extends Controller
         return $this->successResponse($result['result'], $result['message'], $result['code']);
     }
 
-    public function update(Requests\Owner\UpdateRawMaterialCategoryRequest $request): JsonResponse
+    public function update(Requests\Stan\UpdateRawMaterialCategoryRequest $request): JsonResponse
     {
         $checkData = $this->rawMaterialCategoryService->getDataByID($request->uuid, 'uuid');
         if ($checkData['status'] == false) {
@@ -83,7 +83,7 @@ class RawMaterialCategoryController extends Controller
         return $this->successResponse($result['result'], $result['message'], $result['code']);
     }
 
-    public function destroy(Requests\Owner\DeleteRawMaterialCategoryRequest $request): JsonResponse
+    public function destroy(Request $request): JsonResponse
     {
         $checkData = $this->rawMaterialCategoryService->getDataByID($request->uuid, 'uuid');
         if ($checkData['status'] == false) {
@@ -94,6 +94,16 @@ class RawMaterialCategoryController extends Controller
         if ($result['status'] == false) {
             return $this->errorResponse($result['result'], $result['message'], $result['code']);
         }
+        return $this->successResponse($result['result'], $result['message'], $result['code']);
+    }
+
+    public function getByUUID(Request $request): JsonResponse
+    {
+        $result = $this->rawMaterialCategoryService->getDataByID($request->uuid, 'uuid');
+        if ($result['status'] == false) {
+            return $this->errorResponse($result['result'], $result['message'], $result['code']);
+        }
+
         return $this->successResponse($result['result'], $result['message'], $result['code']);
     }
 }

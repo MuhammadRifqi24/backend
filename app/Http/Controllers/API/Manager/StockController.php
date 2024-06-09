@@ -12,7 +12,7 @@ class StockController extends Controller
 {
     protected $stockService;
     protected $productService;
-    public function __construct(Services\StockService $stockService, Services\ProductService $productService)
+    public function __construct(Services\Sultan\StockService $stockService, Services\Sultan\ProductService $productService)
     {
         $this->stockService = $stockService;
         $this->productService = $productService;
