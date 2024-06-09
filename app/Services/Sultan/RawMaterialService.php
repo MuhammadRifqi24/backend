@@ -28,6 +28,17 @@ class RawMaterialService
                         $status = false;
                     }
                     break;
+                case 'stan_id':
+                    $cafeManagement = Models\CafeManagement::select('id', 'user_id', 'stan_id')->where(['user_id' => $id, 'status' => true])->first();
+                    if ($cafeManagement) {
+                        $message .= ' by CafeId';
+                        $result = Models\RawMaterial::with('raw_material_stock', 'raw_material_category:id,name', 'stan:id,name,logo')->where('stan_id', $cafeManagement->stan_id)->get();
+                    } else {
+                        $code = 404;
+                        $message = 'Data Not Found';
+                        $status = false;
+                    }
+                    break;
                 case 'uuid':
                     $result = Models\RawMaterial::with('raw_material_stock', 'raw_material_category:id,name')->where('uuid', $id)->first();
                     break;

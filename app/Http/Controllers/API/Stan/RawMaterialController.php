@@ -23,7 +23,7 @@ class RawMaterialController extends Controller
     public function index(Request $request): JsonResponse
     {
         $auth = $request->user();
-        $result = $this->rawMaterial->getDataByID($auth->id, 'cafe_id');
+        $result = $this->rawMaterial->getDataByID($auth->id, 'stan_id');
         if ($result['status'] == false) {
             return $this->errorResponse($result['result'], $result['message'], $result['code']);
         }
