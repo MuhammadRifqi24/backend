@@ -20,11 +20,11 @@ Route::middleware(['auth:sanctum', 'checkVerifyEmail'])->group(function () {
     Route::get('auth/profile', [API\AuthController::class, 'profile']);
     Route::post('auth/logout', [API\AuthController::class, 'destroy'])->withoutMiddleware('checkVerifyEmail');
 
-    Route::post('auth/register-manager', [API\RegisterController::class, 'registerManager'])->middleware('checkRole:owner');
-    Route::post('auth/register-kasir', [API\RegisterController::class, 'registerKasir'])->middleware('checkRole:owner');
-    Route::post('auth/register-pelayan', [API\RegisterController::class, 'registerPelayan'])->middleware('checkRole:owner');
-    Route::post('auth/register-dapur', [API\RegisterController::class, 'registerDapur'])->middleware('checkRole:owner');
-    Route::post('auth/register-stan', [API\RegisterController::class, 'registerStan'])->middleware('checkRole:owner,admin');
+    Route::post('auth/register-manager', [API\RegisterController::class, 'registerManager'])->middleware('checkRole:owner,manager');
+    Route::post('auth/register-kasir', [API\RegisterController::class, 'registerKasir'])->middleware('checkRole:owner,manager');
+    Route::post('auth/register-pelayan', [API\RegisterController::class, 'registerPelayan'])->middleware('checkRole:owner,manager');
+    Route::post('auth/register-dapur', [API\RegisterController::class, 'registerDapur'])->middleware('checkRole:owner,manager');
+    Route::post('auth/register-stan', [API\RegisterController::class, 'registerStan'])->middleware('checkRole:owner,admin,manager');
 
     Route::get('category/index', [API\CategoryController::class, 'index']);
 });

@@ -69,4 +69,20 @@ class CafeController extends Controller
         }
         return $this->successResponse($result['result'], $result['message'], $result['code']);
     }
+
+    public function management(Request $request): JsonResponse
+    {
+        $auth = $request->user();
+        $result = $this->cafeService->getCafe($auth->id, 'get_info');
+        if ($result['status'] == false) {
+            return $this->errorResponse($result['result'], $result['message'], $result['code']);
+        }
+
+        $resultCafeManagement = $this->cafeService->getCafeManagement($result['result']['cafe_id']);
+        if ($resultCafeManagement['status'] == false) {
+            return $this->errorResponse($resultCafeManagement['result'], $resultCafeManagement['message'], $resultCafeManagement['code']);
+        }
+
+        return $this->successResponse($resultCafeManagement['result'], $resultCafeManagement['message'], $resultCafeManagement['code']);
+    }
 }

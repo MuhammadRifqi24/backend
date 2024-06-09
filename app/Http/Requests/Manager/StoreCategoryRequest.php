@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Requests\Owner;
+namespace App\Http\Requests\Manager;
 
 use App\Traits\ApiResponser;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class StoreStockRequest extends FormRequest
+class StoreCategoryRequest extends FormRequest
 {
     use ApiResponser;
 
@@ -16,19 +16,24 @@ class StoreStockRequest extends FormRequest
         return true;
     }
 
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     */
     public function rules(): array
     {
         return [
-            'qty' => 'required|numeric',
-            'description' => 'nullable|string'
+            'name' => 'required',
+            'description' => 'required'
         ];
     }
 
     public function messages(): array
     {
         return [
-            'qty.required' => 'Qty Harus di Isi',
-            'qty.numeric' => 'Qty Harus angka'
+            'name.required' => 'Nama Harus di Isi',
+            'description.required' => 'Description Harus di Isi',
         ];
     }
 

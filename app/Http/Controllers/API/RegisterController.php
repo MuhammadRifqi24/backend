@@ -52,7 +52,7 @@ class RegisterController extends Controller
     public function registerManager(Requests\RegisterManagerRequest $request): JsonResponse
     {
         $auth = auth()->user();
-        $user = $this->cafeService->getCafe($auth->id, 'user_id');
+        $user = $this->cafeService->getCafe($auth->id, 'get_info');
         if ($user['status'] == false) {
             return $this->errorResponse($user['result'], $user['message'], $user['code']);
         }
@@ -61,7 +61,7 @@ class RegisterController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'role' => 'manager',
-            'cafe_id' => $user['result']->id,
+            'cafe_id' => $user['result']['cafe_id'],
         ], "management");
 
         if ($result['status'] == false) {
@@ -73,7 +73,7 @@ class RegisterController extends Controller
     public function registerKasir(Requests\RegisterKasirRequest $request): JsonResponse
     {
         $auth = auth()->user();
-        $user = $this->cafeService->getCafe($auth->id, 'user_id');
+        $user = $this->cafeService->getCafe($auth->id, 'get_info');
         if ($user['status'] == false) {
             return $this->errorResponse($user['result'], $user['message'], $user['code']);
         }
@@ -82,7 +82,7 @@ class RegisterController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'role' => 'kasir',
-            'cafe_id' => $user['result']->id,
+            'cafe_id' => $user['result']['cafe_id'],
         ], "management");
 
         if ($result['status'] == false) {
@@ -94,7 +94,7 @@ class RegisterController extends Controller
     public function registerPelayan(Requests\RegisterPelayanRequest $request): JsonResponse
     {
         $auth = auth()->user();
-        $user = $this->cafeService->getCafe($auth->id, 'user_id');
+        $user = $this->cafeService->getCafe($auth->id, 'get_info');
         if ($user['status'] == false) {
             return $this->errorResponse($user['result'], $user['message'], $user['code']);
         }
@@ -103,7 +103,7 @@ class RegisterController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'role' => 'pelayan',
-            'cafe_id' => $user['result']->id,
+            'cafe_id' => $user['result']['cafe_id'],
         ], "management");
 
         if ($result['status'] == false) {
@@ -115,7 +115,7 @@ class RegisterController extends Controller
     public function registerDapur(Requests\RegisterDapurRequest $request): JsonResponse
     {
         $auth = auth()->user();
-        $user = $this->cafeService->getCafe($auth->id, 'user_id');
+        $user = $this->cafeService->getCafe($auth->id, 'get_info');
         if ($user['status'] == false) {
             return $this->errorResponse($user['result'], $user['message'], $user['code']);
         }
@@ -124,7 +124,7 @@ class RegisterController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'role' => 'dapur',
-            'cafe_id' => $user['result']->id,
+            'cafe_id' => $user['result']['cafe_id'],
         ], "management");
 
         if ($result['status'] == false) {
@@ -136,7 +136,7 @@ class RegisterController extends Controller
     public function registerStan(Requests\RegisterStanRequest $request): JsonResponse
     {
         $auth = auth()->user();
-        $user = $this->cafeService->getCafe($auth->id, 'user_id');
+        $user = $this->cafeService->getCafe($auth->id, 'get_info');
         if ($user['status'] == false) {
             return $this->errorResponse($user['result'], $user['message'], $user['code']);
         }
@@ -146,7 +146,7 @@ class RegisterController extends Controller
             'name_stan' => $request->name_stan,
             'email' => $request->email,
             'role' => 'stan',
-            'cafe_id' => $user['result']->id,
+            'cafe_id' => $user['result']['cafe_id'],
         ], "management");
 
         return $this->successResponse($result, "testing");

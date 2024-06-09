@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\API\Stan;
+namespace App\Http\Controllers\API\Manager;
 
 use App\Services;
 use Illuminate\Http\Request;

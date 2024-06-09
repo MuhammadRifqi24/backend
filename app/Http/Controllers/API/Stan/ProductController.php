@@ -13,8 +13,7 @@ class ProductController extends Controller
 {
     protected $productService;
     protected $cafeService;
-
-    public function __construct(Services\Sultan\ProductService $productService, Services\CafeService $cafeService)
+    public function __construct(Services\ProductService $productService, Services\CafeService $cafeService)
     {
         $this->productService = $productService;
         $this->cafeService = $cafeService;
@@ -24,6 +23,16 @@ class ProductController extends Controller
     {
         $auth = $request->user();
         $result = $this->productService->getDataByID($auth->id, 'cafe_id');
+        if ($result['status'] == false) {
+            return $this->errorResponse($result['result'], $result['message'], $result['code']);
+        }
+
+        return $this->successResponse($result['result'], $result['message'], $result['code']);
+    }
+
+    public function getByUUID(Request $request): JsonResponse
+    {
+        $result = $this->productService->getDataByID($request->uuid, 'uuid');
         if ($result['status'] == false) {
             return $this->errorResponse($result['result'], $result['message'], $result['code']);
         }
@@ -120,4 +129,6 @@ class ProductController extends Controller
         }
         return $this->successResponse($result['result'], $result['message'], $result['code']);
     }
+
+
 }
