@@ -43,4 +43,7 @@ Route::middleware(['auth:sanctum', 'checkVerifyEmail', 'checkRole:stan'])->group
 
     Route::post('raw-material-stock/increment/{uuid}', [Stan\RawMaterialStockController::class, 'incrementData']);
     Route::post('raw-material-stock/decrement/{uuid}', [Stan\RawMaterialStockController::class, 'decrementData']);
+
+    Route::get('stan/index', [Stan\StanController::class, 'index']);
+    Route::post('stan/update', [Stan\StanController::class, 'update']);
 });
