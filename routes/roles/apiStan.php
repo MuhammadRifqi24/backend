@@ -46,4 +46,7 @@ Route::middleware(['auth:sanctum', 'checkVerifyEmail', 'checkRole:stan'])->group
 
     Route::get('stan/index', [Stan\StanController::class, 'index']);
     Route::post('stan/update', [Stan\StanController::class, 'update']);
+
+    Route::get('order/index', [Stan\OrderController::class, 'index']);
+    Route::get('order/view/{uuid}', [Stan\OrderController::class, 'getByUUID']);
 });

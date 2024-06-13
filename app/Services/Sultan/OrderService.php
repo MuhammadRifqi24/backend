@@ -34,6 +34,22 @@ class OrderService
                         $status = false;
                     }
                     break;
+                case 'stan_id':
+                    $cafeManagement = Models\CafeManagement::select('id', 'user_id', 'stan_id')->where(['user_id' => $id])->first();
+                    if ($cafeManagement) {
+                        $message .= ' by StanId';
+                        $result = Models\Order::with('table_info', 'user', 'cafe')->where('stan_id', $cafeManagement->stan_id)->get();
+                        if(!$result) {
+                            $code = 404;
+                            $message = 'Data Not Found';
+                            $status = false;
+                        }
+                    } else {
+                        $code = 404;
+                        $message = 'Data Not Found';
+                        $status = false;
+                    }
+                    break;
                 case 'user_id':
                     $result = Models\Order::with('table_info', 'user', 'cafe')->where('user_id', $id)->get();
                     if(!$result) {
