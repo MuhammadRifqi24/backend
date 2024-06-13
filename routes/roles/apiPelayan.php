@@ -13,12 +13,12 @@ Route::get('/', function () {
 });
 
 Route::middleware(['auth:sanctum', 'checkVerifyEmail', 'checkRole:pelayan'])->group(function () {
-    Route::get('table-info/index', [Pelayan\TableInfoController::class, 'index']);
-    Route::post('table-info/insert', [Pelayan\TableInfoController::class, 'insert']);
-    Route::post('table-info/update', [Pelayan\TableInfoController::class, 'update']);
-    Route::post('table-info/book-table', [Pelayan\TableInfoController::class, 'bookTable']);
-    Route::post('table-info/finish-table', [Pelayan\TableInfoController::class, 'finishTable']);
-    Route::delete('table-info/delete', [Pelayan\TableInfoController::class, 'destroy']);
+    Route::get('table/index', [Pelayan\TableInfoController::class, 'index']);
+    Route::post('table/insert', [Pelayan\TableInfoController::class, 'insert']);
+    Route::post('table/update', [Pelayan\TableInfoController::class, 'update']);
+    Route::post('table/book-table', [Pelayan\TableInfoController::class, 'bookTable']);
+    Route::post('table/finish-table', [Pelayan\TableInfoController::class, 'finishTable']);
+    Route::delete('table/delete', [Pelayan\TableInfoController::class, 'destroy']);
 
     Route::get('order/index', [Pelayan\OrderController::class, 'index']);
     Route::get('order/uuid/{uuid}', [Pelayan\OrderController::class, 'getByUUID']);
