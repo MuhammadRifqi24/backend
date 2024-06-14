@@ -101,17 +101,26 @@ class OrderController extends Controller
 
     public function insert(Requests\Pelayan\StoreOrderRequest $request): JsonResponse
     {
+        $auth = $request->user();
+        $cafe = $this->cafeService->getCafe($auth->id, 'get_info');
+
+        if ($cafe['status'] == false) {
+            return $this->errorResponse($cafe['result'], $cafe['message'], $cafe['code']);
+        }
+
+        $cafe = $cafe['result'];
+
         $result = $this->orderService->insertData([
             'user_id' => $request['user_id'],
             'table_info_id' => $request['table_info_id'],
-            'cafe_id' => $request['cafe_id'],
+            'cafe_id' => $cafe['cafe_id'],
             'customer_name' => $request->customer_name,
             'order_type' => $request->order_type,
             'note' => $request->note,
             'total_price' => $request->total_price,
-            'status' => false,
-            'payment_status' => false,
-            'order_details' => $request['order_details'],
+            'status' => 0,
+            'payment_status' => 0,
+            'order_details' => $request->order_details,
         ]);
 
         if ($result['status'] == false) {

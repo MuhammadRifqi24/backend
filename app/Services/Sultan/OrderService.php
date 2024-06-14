@@ -127,11 +127,11 @@ class OrderService
             $order->table_info_id = isset($datas['table_info_id']) ? $datas['table_info_id'] : null;
             $order->cafe_id = $datas['cafe_id'];
             $order->customer_name = $datas['customer_name'];
-            $order->order_type = $datas['order_type'];
+            $order->order_type = isset($datas['order_type']) ? $datas['order_type'] : 0;
             $order->note = isset($datas['note']) ? $datas['note'] : null;
             $order->total_price = $datas['total_price'];
-            $order->status = $datas['status'];
-            $order->payment_status = $datas['payment_status'];
+            $order->status = isset($datas['status']) ? $datas['status'] : 0;
+            $order->payment_status = isset($datas['payment_status']) ? $datas['payment_status'] : 0;
             $order->uuid = $uuid;
             $order->save();
 
@@ -145,7 +145,6 @@ class OrderService
                 $order_detail->order_id = $result->id;
                 $order_detail->stan_id = isset($value['stan_id']) ? $value['stan_id'] : null;
                 $order_detail->product_id = $value['product_id'];
-                $order_detail->qty = $value['qty'];
                 $order_detail->qty = $value['qty'];
                 $order_detail->price = $value['price'];
                 $order_detail->uuid = $uuid;
@@ -167,7 +166,7 @@ class OrderService
             if ($status === true) DB::commit();
         } catch (\Throwable $e) {
             DB::rollBack();
-            $code = $e->getCode();
+            $code = 500;
             $message = $e->getMessage();
             $result = [
                 'get_file' => $e->getFile(),
