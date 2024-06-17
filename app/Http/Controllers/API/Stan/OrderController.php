@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\API\Pelayan;
+namespace App\Http\Controllers\API\Stan;
 
 use App\Services;
 use Illuminate\Http\Request;
@@ -23,8 +23,10 @@ class OrderController extends Controller
 
     // mengambil semua data order detail service
     // parameter yg dikirim berupa satu id
-    private function getOrderDetailServiceById($result){
-        $orderDetails = $this->orderDetailService->getDataByID($result['id'], 'order_id');
+    private function getOrderDetailServiceById($result, $stan_id = null){
+        $orderDetails = $this->orderDetailService->getDataByID($result['id'], 'stan_id', [
+            'stan_id' => $stan_id
+        ]);
         if($orderDetails['status']) {
             $result['orderDetails'] = $orderDetails['result'];
         }
@@ -34,11 +36,17 @@ class OrderController extends Controller
 
     // mengambil semua data order detail service
     // parameter yg dikirim berupa array yg berisi id
-    private function getOrderDetailServiceByIds($result){
+    private function getOrderDetailServiceByIds($result, $stan_id = null){
         foreach ($result as $key => $value) {
-            $orderDetails = $this->orderDetailService->getDataByID($value['id'], 'order_id');
+            $orderDetails = $this->orderDetailService->getDataByID($value['id'], 'stan_id', [
+                'stan_id' => $stan_id
+            ]);
+            // echo $orderDetails['result'];
             if($orderDetails['status']) {
                 $result[$key]['orderDetails'] = $orderDetails['result'];
+            } 
+            if($orderDetails['status'] == false) {
+                unset($result[$key]);
             }
         }
         
@@ -52,7 +60,8 @@ class OrderController extends Controller
         if ($result['status'] == false) {
             return $this->errorResponse($result['result'], $result['message'], $result['code']);
         } else {
-            $result['result'] = $this->getOrderDetailServiceByIds($result['result']);
+            $resultStan = $this->cafeService->getCafe($auth->id, 'get_info');
+            $result['result'] = $this->getOrderDetailServiceByIds($result['result'], $resultStan['result']['stan_id']);
         }
 
         return $this->successResponse($result['result'], $result['message'], $result['code']);
@@ -64,7 +73,9 @@ class OrderController extends Controller
         if ($result['status'] == false) {
             return $this->errorResponse($result['result'], $result['message'], $result['code']);
         } else {
-            $result['result'] = $this->getOrderDetailServiceById($result['result']);
+            $auth = $request->user();
+            $resultStan = $this->cafeService->getCafe($auth->id, 'get_info');
+            $result['result'] = $this->getOrderDetailServiceById($result['result'], $resultStan['result']['stan_id']);
         }
 
         return $this->successResponse($result['result'], $result['message'], $result['code']);
@@ -101,26 +112,17 @@ class OrderController extends Controller
 
     public function insert(Requests\Pelayan\StoreOrderRequest $request): JsonResponse
     {
-        $auth = $request->user();
-        $cafe = $this->cafeService->getCafe($auth->id, 'get_info');
-
-        if ($cafe['status'] == false) {
-            return $this->errorResponse($cafe['result'], $cafe['message'], $cafe['code']);
-        }
-
-        $cafe = $cafe['result'];
-
         $result = $this->orderService->insertData([
             'user_id' => $request['user_id'],
             'table_info_id' => $request['table_info_id'],
-            'cafe_id' => $cafe['cafe_id'],
+            'cafe_id' => $request['cafe_id'],
             'customer_name' => $request->customer_name,
             'order_type' => $request->order_type,
             'note' => $request->note,
             'total_price' => $request->total_price,
-            'status' => 0,
-            'payment_status' => 0,
-            'order_details' => $request->order_details,
+            'status' => false,
+            'payment_status' => false,
+            'order_details' => $request['order_details'],
         ]);
 
         if ($result['status'] == false) {

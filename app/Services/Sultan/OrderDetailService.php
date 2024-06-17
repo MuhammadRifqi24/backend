@@ -9,7 +9,7 @@ use App\Services\StockService;
 
 class OrderDetailService
 {
-    public function getDataByID($id, $ket = "")
+    public function getDataByID($id, $ket = "", $datas = null)
     {
         $status = false;
         $code = 200;
@@ -19,7 +19,7 @@ class OrderDetailService
             $status = true;
             switch ($ket) {
                 case 'order_id':
-                    $result = Models\OrderDetail::with('stan')->where('order_id', $id)->get();
+                    $result = Models\OrderDetail::with('stan', 'product')->where('order_id', $id)->get();
                     if(!$result) {
                         $code = 404;
                         $message = 'Data Not Found';
@@ -27,8 +27,8 @@ class OrderDetailService
                     }
                     break;
                 case 'stan_id':
-                    $result = Models\OrderDetail::with('order', 'stan')->where('stan_id', $id)->get();
-                    if(!$result) {
+                    $result = Models\OrderDetail::with('stan', 'product')->where(['order_id' => $id, 'stan_id' => $datas['stan_id']])->get();
+                    if($result->isEmpty()) {
                         $code = 404;
                         $message = 'Data Not Found';
                         $status = false;
