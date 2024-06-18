@@ -16,8 +16,9 @@ Route::middleware(['auth:sanctum', 'checkVerifyEmail', 'checkRole:pelayan'])->gr
     Route::get('table/index', [Pelayan\TableInfoController::class, 'index']);
     Route::post('table/insert', [Pelayan\TableInfoController::class, 'insert']);
     Route::post('table/update', [Pelayan\TableInfoController::class, 'update']);
-    Route::post('table/book-table', [Pelayan\TableInfoController::class, 'bookTable']);
-    Route::post('table/finish-table', [Pelayan\TableInfoController::class, 'finishTable']);
+    Route::post('table/status', [Pelayan\TableInfoController::class, 'updateStatus']);
+    // Route::post('table/book-table', [Pelayan\TableInfoController::class, 'bookTable']);
+    // Route::post('table/finish-table', [Pelayan\TableInfoController::class, 'finishTable']);
     Route::delete('table/delete', [Pelayan\TableInfoController::class, 'destroy']);
 
     Route::get('order/index', [Pelayan\OrderController::class, 'index']);

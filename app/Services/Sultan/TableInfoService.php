@@ -229,6 +229,39 @@ class TableInfoService
         ];
     }
 
+    public function updateStatus($datas = [], $table_info_id)
+    {
+        $status = false;
+        $code = 200;
+        $result = null;
+        DB::beginTransaction();
+        try {
+            $table_info = Models\TableInfo::findOrFail($table_info_id);
+            $table_info->status = $datas['status'];
+            $table_info->save();
+
+            $result = $table_info;
+            $message = "Successfully Update Table Status";
+            $status = true;
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            $code = $e->getCode();
+            $message = $e->getMessage();
+            $result = [
+                'get_file' => $e->getFile(),
+                'get_line' => $e->getLine()
+            ];
+        }
+
+        return [
+            'code' => $code,
+            'status' => $status,
+            'message' => $message,
+            'result' => $result
+        ];
+    }
+
     public function bookTable($datas = [], $table_info_id)
     {
         $status = false;

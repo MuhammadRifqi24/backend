@@ -97,6 +97,24 @@ class TableInfoController extends Controller
         return $this->successResponse($result['result'], $result['message'], $result['code']);
     }
 
+    public function updateStatus(Requests\Pelayan\UpdateTableInfoStatusRequest $request): JsonResponse
+    {
+        $checkData = $this->tableInfoService->getDataByID($request->uuid, 'uuid');
+        if ($checkData['status'] == false) {
+            return $this->errorResponse($checkData['message'], $checkData['result'], $checkData['code']);
+        }
+        $checkData = $checkData['result'];
+
+        $result = $this->tableInfoService->updateStatus([
+            'status' => $request->status,
+        ], $checkData->id);
+
+        if ($result['status'] == false) {
+            return $this->errorResponse($result['result'], $result['message'], $result['code']);
+        }
+        return $this->successResponse($result['result'], $result['message'], $result['code']);
+    }
+
     public function bookTable(Requests\Pelayan\BookTableInfoRequest $request): JsonResponse
     {
         $checkData = $this->tableInfoService->getDataByID($request->uuid, 'uuid');
