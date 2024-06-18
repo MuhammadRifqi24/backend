@@ -23,15 +23,15 @@ Route::middleware(['auth:sanctum', 'checkVerifyEmail', 'checkRole:pelayan'])->gr
     Route::get('order/index', [Pelayan\OrderController::class, 'index']);
     Route::get('order/view/{uuid}', [Pelayan\OrderController::class, 'getByUUID']);
     Route::post('order/insert', [Pelayan\OrderController::class, 'insert']);
-
-    Route::get('order/uuid/{uuid}', [Pelayan\OrderController::class, 'getByUUID']);
-    Route::get('order/user/{user_id}', [Pelayan\OrderController::class, 'getByUserId']);
-    Route::get('order/table/{table_info_id}', [Pelayan\OrderController::class, 'getByTableInfoId']);
-    Route::post('order/update', [Pelayan\OrderController::class, 'update']);
     Route::post('order/status', [Pelayan\OrderController::class, 'updateOrderStatus']);
-    Route::post('order/cancel', [Pelayan\OrderController::class, 'cancel']);
-    Route::post('order/payment-status', [Pelayan\OrderController::class, 'updatePaymentStatus']);
-    Route::delete('order/delete', [Pelayan\OrderController::class, 'destroy']);
+    // Route::post('order/cancel', [Pelayan\OrderController::class, 'cancel']);
+
+    // Route::get('order/uuid/{uuid}', [Pelayan\OrderController::class, 'getByUUID']);
+    // Route::get('order/user/{user_id}', [Pelayan\OrderController::class, 'getByUserId']);
+    // Route::get('order/table/{table_info_id}', [Pelayan\OrderController::class, 'getByTableInfoId']);
+    // Route::post('order/update', [Pelayan\OrderController::class, 'update']);
+    // Route::post('order/payment-status', [Pelayan\OrderController::class, 'updatePaymentStatus']);
+    // Route::delete('order/delete', [Pelayan\OrderController::class, 'destroy']);
 
     Route::get('call-waiter/index', [Pelayan\CallWaiterController::class, 'index']);
     Route::get('call-waiter/uuid/{uuid}', [Pelayan\CallWaiterController::class, 'getByUUID']);

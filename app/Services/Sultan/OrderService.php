@@ -80,7 +80,7 @@ class OrderService
                     }
                     break;
                 case 'uuid':
-                    $result = Models\Order::with('table_info', 'user', 'cafe')->where('uuid', $id)->first();
+                    $result = Models\Order::where('uuid', $id)->first();
                     if(!$result) {
                         $code = 404;
                         $message = 'Data Not Found';
@@ -136,6 +136,13 @@ class OrderService
             $order->save();
 
             $result = $order;
+
+            if($result->order_type == 1) {
+                $table_info = Models\TableInfo::findOrFail($order->table_info_id);
+                $table_info->status = 0;
+                $table_info->user_id = null;
+                $table_info->save();
+            }
 
             // insert ke tabel orderdetail
             foreach ($datas['order_details'] as $key => $value) {
@@ -264,7 +271,7 @@ class OrderService
             $order->save();
 
             // check if has booked table
-            if($order->table_info_id != null) {
+            if($order->status == 5 && $order->table_info_id != null) {
                 $table_info = Models\TableInfo::findOrFail($order->table_info_id);
                 $table_info->status = 1;
                 $table_info->user_id = null;
