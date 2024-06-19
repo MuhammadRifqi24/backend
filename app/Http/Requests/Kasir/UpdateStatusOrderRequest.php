@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Dapur;
+namespace App\Http\Requests\Kasir;
 
 use App\Traits\ApiResponser;
 use Illuminate\Foundation\Http\FormRequest;
