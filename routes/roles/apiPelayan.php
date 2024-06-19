@@ -35,9 +35,10 @@ Route::middleware(['auth:sanctum', 'checkVerifyEmail', 'checkRole:pelayan'])->gr
     // Route::delete('order/delete', [Pelayan\OrderController::class, 'destroy']);
 
     Route::get('call-waiter/index', [Pelayan\CallWaiterController::class, 'index']);
-    Route::get('call-waiter/uuid/{uuid}', [Pelayan\CallWaiterController::class, 'getByUUID']);
-    Route::post('call-waiter/completed', [Pelayan\CallWaiterController::class, 'completed']);
-    Route::post('call-waiter/cancel', [Pelayan\CallWaiterController::class, 'cancel']);
+    Route::post('call-waiter/status', [Pelayan\CallWaiterController::class, 'updateStatus']);
+    // Route::get('call-waiter/uuid/{uuid}', [Pelayan\CallWaiterController::class, 'getByUUID']);
+    // Route::post('call-waiter/completed', [Pelayan\CallWaiterController::class, 'completed']);
+    // Route::post('call-waiter/cancel', [Pelayan\CallWaiterController::class, 'cancel']);
 
     Route::get('product/index', [Pelayan\ProductController::class, 'index']);
     Route::get('product/view/{uuid}', [Pelayan\ProductController::class, 'getByUUID']);
