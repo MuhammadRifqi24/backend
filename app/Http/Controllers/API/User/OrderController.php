@@ -65,15 +65,6 @@ class OrderController extends Controller
             return $this->errorResponse($result['result'], $result['message'], $result['code']);
         }
 
-        $auth = $request->user();
-        if($result['result']->user_id != $auth->id) {
-            $code = 404;
-            $message = 'Data Not Found';
-            $status = false;
-
-            return $this->errorResponse([], $message, $code);
-        }
-
         $result['result'] = $this->getOrderDetailServiceById($result['result']);
 
         return $this->successResponse($result['result'], $result['message'], $result['code']);
@@ -102,7 +93,7 @@ class OrderController extends Controller
         return $this->successResponse($result['result'], $result['message'], $result['code']);
     }
 
-    public function cancel(Requests\User\CancelOrderRequest $request): JsonResponse
+    public function updateOrderStatus(Requests\User\UpdateStatusOrderRequest $request): JsonResponse
     {
         $checkData = $this->orderService->getDataByID($request->uuid, 'uuid');
         if ($checkData['status'] == false) {
@@ -110,16 +101,8 @@ class OrderController extends Controller
         }
         $checkData = $checkData['result'];
 
-        $auth = $request->user();
-        if ($checkData->user_id != $auth->id) {
-            $code = 404;
-            $message = 'Data Not Found';
-
-            return $this->errorResponse([], $message, $code);
-        }
-
         $result = $this->orderService->updateOrderStatus([
-            'status' => 5,
+            'status' => $request->status,
         ], $checkData->id);
 
         if ($result['status'] == false) {

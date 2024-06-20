@@ -29,6 +29,14 @@ class ProductService
                         $status = false;
                     }
                     break;
+                case 'id':
+                    $result = Models\Product::with('stock', 'category:id,name', 'stan:id,name,logo')->where('cafe_id', $id)->get();
+                    if (!$result) {
+                        $code = 404;
+                        $message = 'Data Not Found';
+                        $status = false;
+                    }
+                    break;
                 case 'uuid':
                     $result = Models\Product::with('stock', 'category:id,name')->where('uuid', $id)->first();
                     break;
