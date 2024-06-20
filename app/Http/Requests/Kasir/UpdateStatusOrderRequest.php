@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Requests\Pelayan;
+namespace App\Http\Requests\Kasir;
 
 use App\Traits\ApiResponser;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class UpdateStatusCallWaiterRequest extends FormRequest
+class UpdateStatusOrderRequest extends FormRequest
 {
     use ApiResponser;
 
@@ -20,7 +20,7 @@ class UpdateStatusCallWaiterRequest extends FormRequest
     {
         return [
             'uuid' => 'required',
-            'status' => 'required|in:0,1,2'
+            'status' => 'required|in:0,1,2,3,4,5',
         ];
     }
 
@@ -28,8 +28,8 @@ class UpdateStatusCallWaiterRequest extends FormRequest
     {
         return [
             'uuid.required' => 'UUID Harus ada',
-            'status.required' => 'Status Harus ada',
-            'status.in' => 'Status harus salah satu dari: 0, 1, 2',
+            'status.required' => 'Status Order Harus ada',
+            'status.in' => 'Status Order harus salah satu dari: 0, 1, 2, 3, 4, 5',
         ];
     }
 

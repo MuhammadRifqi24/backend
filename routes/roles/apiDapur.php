@@ -16,4 +16,8 @@ Route::middleware(['auth:sanctum', 'checkVerifyEmail', 'checkRole:dapur'])->grou
     Route::post('product/insert', [Dapur\ProductController::class, 'insert']);
     Route::post('product/update', [Dapur\ProductController::class, 'update']);
     Route::delete('product/delete', [Dapur\ProductController::class, 'destroy']);
+
+    Route::get('order/index', [Dapur\OrderController::class, 'index']);
+    Route::get('order/view/{uuid}', [Dapur\OrderController::class, 'getByUUID']);
+    Route::post('order/status', [Dapur\OrderController::class, 'updateOrderStatus']);
 });
