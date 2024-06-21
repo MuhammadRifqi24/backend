@@ -80,7 +80,7 @@ class OrderService
                     }
                     break;
                 case 'uuid':
-                    $result = Models\Order::where('uuid', $id)->first();
+                    $result = Models\Order::with('cafe')->where('uuid', $id)->first();
                     if(!$result) {
                         $code = 404;
                         $message = 'Data Not Found';

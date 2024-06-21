@@ -41,6 +41,14 @@ class TableInfoService
                         $status = false;
                     }
                     break;
+                case 'id':
+                    $result = Models\TableInfo::with('cafe')->where('cafe_id', $id)->get();
+                    if(!$result) {
+                        $code = 404;
+                        $message = 'Data Not Found';
+                        $status = false;
+                    }
+                    break;
                 case 'uuid':
                     $result = Models\TableInfo::with('cafe')->where('uuid', $id)->first();
                     if(!$result) {
