@@ -53,4 +53,7 @@ Route::middleware(['auth:sanctum', 'checkVerifyEmail', 'checkRole:owner'])->grou
 
     Route::get('order/index', [Owner\OrderController::class, 'index']);
     Route::get('order/view/{uuid}', [Owner\OrderController::class, 'getByUUID']);
+
+    Route::get('raw-material-stock-in/index', [Owner\RawMaterialStockInController::class, 'index']);
+    Route::get('raw-material-stock-out/index', [Owner\RawMaterialStockOutController::class, 'index']);
 });
