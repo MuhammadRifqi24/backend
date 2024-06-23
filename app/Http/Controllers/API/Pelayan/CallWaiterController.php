@@ -38,7 +38,7 @@ class CallWaiterController extends Controller
         return $this->successResponse($result['result'], $result['message'], $result['code']);
     }
 
-    public function completed(Requests\Pelayan\UpdateStatusCallWaiterRequest $request): JsonResponse
+    public function updateStatus(Requests\Pelayan\UpdateStatusCallWaiterRequest $request): JsonResponse
     {
         $checkData = $this->callWaiterService->getDataByID($request->uuid, 'uuid');
         if ($checkData['status'] == false) {
@@ -47,7 +47,7 @@ class CallWaiterController extends Controller
         $checkData = $checkData['result'];
 
         $result = $this->callWaiterService->updateStatus([
-            'status' => 1,
+            'status' => $request->status,
         ], $checkData->id);
 
         if ($result['status'] == false) {
@@ -56,21 +56,39 @@ class CallWaiterController extends Controller
         return $this->successResponse($result['result'], $result['message'], $result['code']);
     }
 
-    public function cancel(Requests\Pelayan\UpdateStatusCallWaiterRequest $request): JsonResponse
-    {
-        $checkData = $this->callWaiterService->getDataByID($request->uuid, 'uuid');
-        if ($checkData['status'] == false) {
-            return $this->errorResponse($checkData['message'], $checkData['result'], $checkData['code']);
-        }
-        $checkData = $checkData['result'];
+    // public function completed(Requests\Pelayan\UpdateStatusCallWaiterRequest $request): JsonResponse
+    // {
+    //     $checkData = $this->callWaiterService->getDataByID($request->uuid, 'uuid');
+    //     if ($checkData['status'] == false) {
+    //         return $this->errorResponse($checkData['message'], $checkData['result'], $checkData['code']);
+    //     }
+    //     $checkData = $checkData['result'];
 
-        $result = $this->callWaiterService->updateStatus([
-            'status' => 2,
-        ], $checkData->id);
+    //     $result = $this->callWaiterService->updateStatus([
+    //         'status' => 1,
+    //     ], $checkData->id);
 
-        if ($result['status'] == false) {
-            return $this->errorResponse($result['result'], $result['message'], $result['code']);
-        }
-        return $this->successResponse($result['result'], $result['message'], $result['code']);
-    }
+    //     if ($result['status'] == false) {
+    //         return $this->errorResponse($result['result'], $result['message'], $result['code']);
+    //     }
+    //     return $this->successResponse($result['result'], $result['message'], $result['code']);
+    // }
+
+    // public function cancel(Requests\Pelayan\UpdateStatusCallWaiterRequest $request): JsonResponse
+    // {
+    //     $checkData = $this->callWaiterService->getDataByID($request->uuid, 'uuid');
+    //     if ($checkData['status'] == false) {
+    //         return $this->errorResponse($checkData['message'], $checkData['result'], $checkData['code']);
+    //     }
+    //     $checkData = $checkData['result'];
+
+    //     $result = $this->callWaiterService->updateStatus([
+    //         'status' => 2,
+    //     ], $checkData->id);
+
+    //     if ($result['status'] == false) {
+    //         return $this->errorResponse($result['result'], $result['message'], $result['code']);
+    //     }
+    //     return $this->successResponse($result['result'], $result['message'], $result['code']);
+    // }
 }

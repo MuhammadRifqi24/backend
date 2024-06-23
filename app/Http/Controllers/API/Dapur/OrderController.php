@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\API\User;
+namespace App\Http\Controllers\API\Dapur;
 
 use App\Services;
 use Illuminate\Http\Request;
@@ -48,7 +48,7 @@ class OrderController extends Controller
     public function index(Request $request): JsonResponse
     {
         $auth = $request->user();
-        $result = $this->orderService->getDataByID($auth->id, 'user_id');
+        $result = $this->orderService->getDataByID($auth->id, 'cafe_id');
         if ($result['status'] == false) {
             return $this->errorResponse($result['result'], $result['message'], $result['code']);
         } else {
@@ -63,37 +63,14 @@ class OrderController extends Controller
         $result = $this->orderService->getDataByID($uuid, 'uuid');
         if ($result['status'] == false) {
             return $this->errorResponse($result['result'], $result['message'], $result['code']);
+        } else {
+            $result['result'] = $this->getOrderDetailServiceById($result['result']);
         }
-
-        $result['result'] = $this->getOrderDetailServiceById($result['result']);
 
         return $this->successResponse($result['result'], $result['message'], $result['code']);
     }
 
-    public function insert(Requests\User\StoreOrderRequest $request): JsonResponse
-    {
-        $auth = $request->user();
-        $result = $this->orderService->insertData([
-            'user_id' => $auth->id,
-            'table_info_id' => $request['table_info_id'],
-            'cafe_id' => $request['cafe_id'],
-            'customer_name' => $request->customer_name,
-            'order_type' => $request->order_type,
-            'note' => $request->note,
-            'total_price' => $request->total_price,
-            'status' => false,
-            'payment_status' => false,
-            'order_details' => $request['order_details'],
-        ]);
-
-        if ($result['status'] == false) {
-            return $this->errorResponse($result['result'], $result['message'], $result['code']);
-        }
-        
-        return $this->successResponse($result['result'], $result['message'], $result['code']);
-    }
-
-    public function updateOrderStatus(Requests\User\UpdateStatusOrderRequest $request): JsonResponse
+    public function updateOrderStatus(Requests\Dapur\UpdateStatusOrderRequest $request): JsonResponse
     {
         $checkData = $this->orderService->getDataByID($request->uuid, 'uuid');
         if ($checkData['status'] == false) {

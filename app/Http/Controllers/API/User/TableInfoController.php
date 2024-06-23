@@ -19,9 +19,9 @@ class TableInfoController extends Controller
         $this->cafeService = $cafeService;
     }
 
-    public function index(Request $request, $id): JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        $result = $this->tableInfoService->getDataByID($id, 'cafe_id');
+        $result = $this->tableInfoService->getDataByID($request->id, 'cafe_id');
         
         if ($result['status'] == false) {
             return $this->errorResponse($result['result'], $result['message'], $result['code']);

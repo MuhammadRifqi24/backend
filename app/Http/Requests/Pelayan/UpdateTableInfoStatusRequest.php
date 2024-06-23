@@ -7,7 +7,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class UpdateStatusCallWaiterRequest extends FormRequest
+class UpdateTableInfoStatusRequest extends FormRequest
 {
     use ApiResponser;
 
@@ -20,7 +20,7 @@ class UpdateStatusCallWaiterRequest extends FormRequest
     {
         return [
             'uuid' => 'required',
-            'status' => 'required|in:0,1,2'
+            'status' => 'required|in:0,1',
         ];
     }
 
@@ -28,8 +28,8 @@ class UpdateStatusCallWaiterRequest extends FormRequest
     {
         return [
             'uuid.required' => 'UUID Harus ada',
-            'status.required' => 'Status Harus ada',
-            'status.in' => 'Status harus salah satu dari: 0, 1, 2',
+            'status.required' => 'Status Table Harus ada',
+            'status.in' => 'Status Table harus salah satu dari: 0 atau 1',
         ];
     }
 

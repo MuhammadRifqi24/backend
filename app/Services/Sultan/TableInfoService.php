@@ -41,6 +41,14 @@ class TableInfoService
                         $status = false;
                     }
                     break;
+                case 'id':
+                    $result = Models\TableInfo::with('cafe')->where('cafe_id', $id)->get();
+                    if(!$result) {
+                        $code = 404;
+                        $message = 'Data Not Found';
+                        $status = false;
+                    }
+                    break;
                 case 'uuid':
                     $result = Models\TableInfo::with('cafe')->where('uuid', $id)->first();
                     if(!$result) {
@@ -213,6 +221,39 @@ class TableInfoService
                 $message = 'Data tidak ditemukan';
             }
         } catch (\Throwable $e) {
+            $code = $e->getCode();
+            $message = $e->getMessage();
+            $result = [
+                'get_file' => $e->getFile(),
+                'get_line' => $e->getLine()
+            ];
+        }
+
+        return [
+            'code' => $code,
+            'status' => $status,
+            'message' => $message,
+            'result' => $result
+        ];
+    }
+
+    public function updateStatus($datas = [], $table_info_id)
+    {
+        $status = false;
+        $code = 200;
+        $result = null;
+        DB::beginTransaction();
+        try {
+            $table_info = Models\TableInfo::findOrFail($table_info_id);
+            $table_info->status = $datas['status'];
+            $table_info->save();
+
+            $result = $table_info;
+            $message = "Successfully Update Table Status";
+            $status = true;
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollBack();
             $code = $e->getCode();
             $message = $e->getMessage();
             $result = [

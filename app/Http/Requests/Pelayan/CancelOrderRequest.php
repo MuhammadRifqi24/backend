@@ -19,7 +19,7 @@ class CancelOrderRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'uuid' => 'required',
+            'uuid' => 'required'
         ];
     }
 
