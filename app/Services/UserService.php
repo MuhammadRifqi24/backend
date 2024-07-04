@@ -246,7 +246,8 @@ class UserService
                 $userLevel->save();
             }
 
-            $url_ = env('URL_FE', 'https://cafe.markazvirtual.com');
+            // $url_ = env('URL_FE', 'https://cafe.markazvirtual.com');
+            $url_ = env('URL_FE', 'http://localhost:3006');
             $url = $url_ . '/verify?uuid=' . $uuid . '&email=' . $user->email;
 
             switch ($datas['role']) {
@@ -260,7 +261,7 @@ class UserService
 
                     $url = $url_ . '/verify/owner?uuid=' . $uuid . '&email=' . $user->email;
                     $cafeID = $cafe->id;
-                    //Notification::send($user, new Notifications\UserVerifyEmail($user, ['url' => $url]));
+                    // Notification::send($user, new Notifications\UserVerifyEmail($user, ['url' => $url]));
                     break;
                 case 'stan':
                     //* Save Data Stan
@@ -273,23 +274,23 @@ class UserService
 
                     $stanID = $stan->id;
                     $message = ' Pemilik Stan ' . $datas['name_stan'];
-                    //Notification::send($user, new Notifications\OwnerSendEmail($user, ['message' => $message, 'url' => $url]));
+                    // Notification::send($user, new Notifications\OwnerSendEmail($user, ['message' => $message, 'url' => $url]));
                     break;
                 case 'manager':
                     $message = ' Manager';
-                    //Notification::send($user, new Notifications\OwnerSendEmail($user, ['message' => $message, 'url' => $url]));
+                    // Notification::send($user, new Notifications\OwnerSendEmail($user, ['message' => $message, 'url' => $url]));
                     break;
                 case 'kasir':
                     $message = ' Kasir';
-                    //Notification::send($user, new Notifications\OwnerSendEmail($user, ['message' => $message, 'url' => $url]));
+                    // Notification::send($user, new Notifications\OwnerSendEmail($user, ['message' => $message, 'url' => $url]));
                     break;
                 case 'pelayan':
                     $message = ' Pelayan';
-                    //Notification::send($user, new Notifications\OwnerSendEmail($user, ['message' => $message, 'url' => $url]));
+                    Notification::send($user, new Notifications\OwnerSendEmail($user, ['message' => $message, 'url' => $url]));
                     break;
                 case 'user':
                     $message = ' User';
-                    //Notification::send($user, new Notifications\OwnerSendEmail($user, ['message' => $message, 'url' => $url]));
+                    // Notification::send($user, new Notifications\OwnerSendEmail($user, ['message' => $message, 'url' => $url]));
                     break;
             }
 

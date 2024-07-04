@@ -59,24 +59,24 @@ class FileUploadService
         try {
             $manager = new ImageManager(new Driver());
             if ($update != null) {
-                $cekimage = public_path('images/stan/' . $update);
+                $cekimage = public_path('images/cafe/' . $update);
                 if (file_exists($cekimage)) unlink($cekimage);
-                $cekthumbnail = public_path('images/stan/thumbnail/' . $update);
+                $cekthumbnail = public_path('images/cafe/thumbnail/' . $update);
                 if (file_exists($cekthumbnail)) unlink($cekthumbnail);
             }
-            $image = $file->move(public_path() . '/images/stan/temp/', $name);
+            $image = $file->move(public_path() . '/images/cafe/temp/', $name);
             //resize image aspect ratio
             $original = $manager->read($image);
             if ($original->width() > 800) {
                 $original->scale(800, 800);
             }
-            $ori = $original->save(public_path('images/stan/' . $name));
+            $ori = $original->save(public_path('images/cafe/' . $name));
 
             $thumbnail = $manager->read($image);
             if ($thumbnail->width() > 250) {
                 $thumbnail->scale(250, 250);
             }
-            $thumb = $thumbnail->save(public_path('images/stan/thumbnail/' . $name));
+            $thumb = $thumbnail->save(public_path('images/cafe/thumbnail/' . $name));
 
             if ($ori && $thumb) {
                 if (file_exists($image)) unlink($image);
