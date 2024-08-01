@@ -30,7 +30,7 @@ class OrderController extends Controller
         if($orderDetails['status']) {
             $result['orderDetails'] = $orderDetails['result'];
         }
-        
+
         return $result;
     }
 
@@ -44,12 +44,12 @@ class OrderController extends Controller
             // echo $orderDetails['result'];
             if($orderDetails['status']) {
                 $result[$key]['orderDetails'] = $orderDetails['result'];
-            } 
+            }
             if($orderDetails['status'] == false) {
                 unset($result[$key]);
             }
         }
-        
+
         return $result;
     }
 
@@ -128,7 +128,7 @@ class OrderController extends Controller
         if ($result['status'] == false) {
             return $this->errorResponse($result['result'], $result['message'], $result['code']);
         }
-        
+
         return $this->successResponse($result['result'], $result['message'], $result['code']);
     }
 
@@ -192,7 +192,7 @@ class OrderController extends Controller
             return $this->errorResponse($checkData['message'], $checkData['result'], $checkData['code']);
         }
         $checkData = $checkData['result'];
-        
+
         $result = $this->orderService->updatePaymentStatus([
             'payment_status' => $request->payment_status,
         ], $checkData->id);

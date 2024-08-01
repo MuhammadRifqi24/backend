@@ -36,85 +36,85 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        $exceptions->render(function (Throwable $exception, Request $request) {
-            if ($exception instanceof InvalidArgumentException) {
-                $code = 500;
-                $message = "kesalahan InvalidArgumentException, kirim email gagal ...";
-                return response()->json([
-                    'status' => false,
-                    'message' => $message,
-                    'result' => [
-                        'file' => $exception->getFile(),
-                        'line' => $exception->getLine(),
-                        'code' => $code,
-                        'message' => $exception->getMessage()
-                    ]
-                ], $code);
-            } else if ($exception instanceof MethodNotAllowedHttpException) {
-                $code = $exception->getStatusCode();
-                $message = "Method URL tidak diizinkan";
-                return response()->json([
-                    'status' => false,
-                    'message' => $message,
-                    'result' => [
-                        'file' => $exception->getFile(),
-                        'line' => $exception->getLine(),
-                        'code' => $code,
-                        'message' => $exception->getMessage()
-                    ]
-                ], $code);
-            } else if ($exception instanceof AuthenticationException) {
-                $code = Response::HTTP_UNAUTHORIZED;
-                $message = "Sesi token anda sudah habis, silahkan login ulang";
-                return response()->json([
-                    'status' => false,
-                    'message' => $message,
-                    'result' => [
-                        'file' => $exception->getFile(),
-                        'line' => $exception->getLine(),
-                        'code' => $code,
-                        'message' => $exception->getMessage()
-                    ]
-                ], $code);
-            } else if ($exception instanceof TypeError) {
-                $code = Response::HTTP_INTERNAL_SERVER_ERROR;
-                $message = "Jangan asal bro";
-                return response()->json([
-                    'status' => false,
-                    'message' => $message,
-                    'result' => [
-                        'file' => $exception->getFile(),
-                        'line' => $exception->getLine(),
-                        'code' => $code,
-                        'message' => $exception->getMessage()
-                    ]
-                ], $code);
-            } else if ($exception instanceof ArgumentCountError) {
-                $code = Response::HTTP_REQUEST_TIMEOUT;
-                $message = "Argument tidak lengkap";
-                return response()->json([
-                    'status' => false,
-                    'message' => $message,
-                    'result' => [
-                        'file' => $exception->getFile(),
-                        'line' => $exception->getLine(),
-                        'code' => $code,
-                        'message' => $exception->getMessage()
-                    ]
-                ], $code);
-            } else if ($exception instanceof NotFoundHttpException) {
-                $code = $exception->getStatusCode();
-                $message = "Route API tidak tersedia";
-                return response()->json([
-                    'status' => false,
-                    'message' => $message,
-                    'result' => [
-                        'file' => $exception->getFile(),
-                        'line' => $exception->getLine(),
-                        'code' => $code,
-                        'message' => $exception->getMessage()
-                    ]
-                ], $code);
-            }
-        });
+//        $exceptions->render(function (Throwable $exception, Request $request) {
+//            if ($exception instanceof InvalidArgumentException) {
+//                $code = 500;
+//                $message = "kesalahan InvalidArgumentException, kirim email gagal ...";
+//                return response()->json([
+//                    'status' => false,
+//                    'message' => $message,
+//                    'result' => [
+//                        'file' => $exception->getFile(),
+//                        'line' => $exception->getLine(),
+//                        'code' => $code,
+//                        'message' => $exception->getMessage()
+//                    ]
+//                ], $code);
+//            } else if ($exception instanceof MethodNotAllowedHttpException) {
+//                $code = $exception->getStatusCode();
+//                $message = "Method URL tidak diizinkan";
+//                return response()->json([
+//                    'status' => false,
+//                    'message' => $message,
+//                    'result' => [
+//                        'file' => $exception->getFile(),
+//                        'line' => $exception->getLine(),
+//                        'code' => $code,
+//                        'message' => $exception->getMessage()
+//                    ]
+//                ], $code);
+//            } else if ($exception instanceof AuthenticationException) {
+//                $code = Response::HTTP_UNAUTHORIZED;
+//                $message = "Sesi token anda sudah habis, silahkan login ulang";
+//                return response()->json([
+//                    'status' => false,
+//                    'message' => $message,
+//                    'result' => [
+//                        'file' => $exception->getFile(),
+//                        'line' => $exception->getLine(),
+//                        'code' => $code,
+//                        'message' => $exception->getMessage()
+//                    ]
+//                ], $code);
+//            } else if ($exception instanceof TypeError) {
+//                $code = Response::HTTP_INTERNAL_SERVER_ERROR;
+//                $message = "Jangan asal bro";
+//                return response()->json([
+//                    'status' => false,
+//                    'message' => $message,
+//                    'result' => [
+//                        'file' => $exception->getFile(),
+//                        'line' => $exception->getLine(),
+//                        'code' => $code,
+//                        'message' => $exception->getMessage()
+//                    ]
+//                ], $code);
+//            } else if ($exception instanceof ArgumentCountError) {
+//                $code = Response::HTTP_REQUEST_TIMEOUT;
+//                $message = "Argument tidak lengkap";
+//                return response()->json([
+//                    'status' => false,
+//                    'message' => $message,
+//                    'result' => [
+//                        'file' => $exception->getFile(),
+//                        'line' => $exception->getLine(),
+//                        'code' => $code,
+//                        'message' => $exception->getMessage()
+//                    ]
+//                ], $code);
+//            } else if ($exception instanceof NotFoundHttpException) {
+//                $code = $exception->getStatusCode();
+//                $message = "Route API tidak tersedia";
+//                return response()->json([
+//                    'status' => false,
+//                    'message' => $message,
+//                    'result' => [
+//                        'file' => $exception->getFile(),
+//                        'line' => $exception->getLine(),
+//                        'code' => $code,
+//                        'message' => $exception->getMessage()
+//                    ]
+//                ], $code);
+//            }
+//        });
     })->create();

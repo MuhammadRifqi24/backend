@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Services\Sultan;
+namespace App\Services\Rifqi;
 
 use App\Models;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 
@@ -17,13 +16,9 @@ class TableInfoService
         try {
             $message = "Get data Table Info";
             $status = true;
-            $cacheTabelInfoName = "tabel_info_{$ket}_{$id}";
-            $cacheCafeManagementName = "cafe_management_{$ket}_{$id}";
             switch ($ket) {
                 case 'user_id':
-                    $result = Cache::tags(['get_tabel_info'])->remember($cacheTabelInfoName, now()->addMinute(150), function () use($id){
-                        return Models\TableInfo::with('cafe')->where(['user_id' => $id, 'status' => false])->first();
-                    });
+                    $result = Models\TableInfo::with('cafe')->where(['user_id' => $id, 'status' => false])->first();
                     if(!$result) {
                         $code = 404;
                         $message = 'Data Not Found';
@@ -31,14 +26,10 @@ class TableInfoService
                     }
                     break;
                 case 'cafe_id':
-                    $cafeManagement = Cache::tags(['get_tabel_info'])->remember($cacheCafeManagementName, now()->addMinute(150), function () use($id){
-                        return Models\CafeManagement::select('id', 'user_id', 'cafe_id')->where(['cafe_id' => $id, 'status' => true])->first();
-                    });
+                    $cafeManagement = Models\CafeManagement::select('id', 'user_id', 'cafe_id')->where(['cafe_id' => $id, 'status' => true])->first();
                     if ($cafeManagement) {
                         $message .= ' by CafeId';
-                        $result = Cache::tags(['get_tabel_info'])->remember($cacheTabelInfoName, now()->addMinute(150), function () use($cafeManagement){
-                            return Models\TableInfo::with('cafe')->where('cafe_id', $cafeManagement->cafe_id)->get();
-                        });
+                        $result = Models\TableInfo::with('cafe')->where('cafe_id', $cafeManagement->cafe_id)->get();
                         if(!$result) {
                             $code = 404;
                             $message = 'Data Not Found';
@@ -51,9 +42,7 @@ class TableInfoService
                     }
                     break;
                 case 'id':
-                    $result = Cache::tags(['get_tabel_info'])->remember($cacheTabelInfoName, now()->addMinute(150), function () use($id){
-                        return Models\TableInfo::with('cafe')->where('cafe_id', $id)->get();
-                    });
+                    $result = Models\TableInfo::with('cafe')->where('cafe_id', $id)->get();
                     if(!$result) {
                         $code = 404;
                         $message = 'Data Not Found';
@@ -61,9 +50,7 @@ class TableInfoService
                     }
                     break;
                 case 'uuid':
-                    $result = Cache::tags(['get_tabel_info'])->remember($cacheTabelInfoName, now()->addMinute(150), function () use($id){
-                        return Models\TableInfo::with('cafe')->where('uuid', $id)->first();
-                    });
+                    $result = Models\TableInfo::with('cafe')->where('uuid', $id)->first();
                     if(!$result) {
                         $code = 404;
                         $message = 'Data Not Found';
@@ -71,9 +58,7 @@ class TableInfoService
                     }
                     break;
                 case 'status':
-                    $result = Cache::tags(['get_tabel_info'])->remember($cacheTabelInfoName, now()->addMinute(150), function () use($id){
-                        return Models\TableInfo::where(['uuid' => $id, 'status' => true])->first();
-                    });
+                    $result = Models\TableInfo::where(['uuid' => $id, 'status' => true])->first();
                     if (!$result) {
                         $code = 404;
                         $message = 'Data Not Found';
@@ -81,9 +66,7 @@ class TableInfoService
                     }
                     break;
                 default:
-                    $result = Cache::tags(['get_tabel_info'])->remember($cacheTabelInfoName, now()->addMinute(150), function () use($id){
-                        return Models\TableInfo::where('uuid', $id)->first();
-                    });
+                    $result = Models\TableInfo::where('uuid', $id)->first();
                     break;
             }
         } catch (\Throwable $e) {
@@ -136,7 +119,7 @@ class TableInfoService
             }
 
             $data = [];
-
+            
             $total = ($datas['total']-1) + $max_number;
             for ($i = $max_number; $i <= $total; $i++) {
                 $uuid = Str::uuid()->getHex()->toString();
@@ -157,7 +140,6 @@ class TableInfoService
             $message = "Successfully insert Table Info";
             $status = true;
             $code = 201;
-            Cache::tags('get_tabel_info')->flush();
 
             if ($status === true) DB::commit();
         } catch (\Throwable $e) {
@@ -194,8 +176,6 @@ class TableInfoService
             $result = $table_info;
             $message = "Successfully Update Table Info";
             $status = true;
-            Cache::tags('get_tabel_info')->flush();
-
             DB::commit();
         } catch (\Throwable $e) {
             DB::rollBack();
@@ -223,7 +203,7 @@ class TableInfoService
         $message = '';
         try {
             $table_info = Models\TableInfo::where('uuid', $uuid)->first();
-
+            
             if ($table_info) {
                 $last_number = $this->getLastMaxNumber($table_info->cafe_id);
                 if($last_number == $table_info->number) {
@@ -232,7 +212,6 @@ class TableInfoService
                     $status = true;
                     $result = true;
                     $message = 'Successfully delete Table Info';
-                    Cache::tags('get_tabel_info')->flush();
                 } else {
                     $code = 404;
                     $message = 'Data tidak boleh dihapus';
@@ -272,7 +251,6 @@ class TableInfoService
             $result = $table_info;
             $message = "Successfully Update Table Status";
             $status = true;
-            Cache::tags('get_tabel_info')->flush();
             DB::commit();
         } catch (\Throwable $e) {
             DB::rollBack();
@@ -304,11 +282,10 @@ class TableInfoService
                 $table_info->user_id = $datas['user_id'] == null ? null : $datas['user_id'];
                 $table_info->status = 0;
                 $table_info->save();
-
+    
                 $result = $table_info;
                 $message = "Successfully Booking Table";
                 $status = true;
-                Cache::tags('get_tabel_info')->flush();
             } else {
                 $result = $table_info;
                 $message = "Failed to Book a Table, Already Booked";

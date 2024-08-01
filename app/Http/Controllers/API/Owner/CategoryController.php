@@ -39,7 +39,7 @@ class CategoryController extends Controller
             return $this->errorResponse($cafe_management['result'], $cafe_management['message'], $cafe_management['code']);
         }
         $cafe_management = $cafe_management['result'];
-        
+
         $result = $this->categoryService->insertData([
             'cafe_id' => $cafe_management['cafe_id'],
             'name' => $request->name,

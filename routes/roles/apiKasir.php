@@ -20,4 +20,5 @@ Route::middleware(['auth:sanctum', 'checkVerifyEmail', 'checkRole:kasir'])->grou
     Route::get('order/index', [Kasir\OrderController::class, 'index']);
     Route::get('order/view/{uuid}', [Kasir\OrderController::class, 'getByUUID']);
     Route::post('order/status', [Kasir\OrderController::class, 'updateOrderStatus']);
+    Route::post('order/payment-status', [Kasir\OrderController::class, 'updatePaymentStatus']);
 });

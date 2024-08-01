@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models;
 use App\Models\UserLevel;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -20,7 +21,9 @@ class UserService
         try {
             $message = "Get data Profile";
             $auth = Auth::user();
-            $result = Models\User::with('user_level')->findOrFail($auth->id);
+            $result = Cache::remember("profile_{$auth->name}_data", now()->addMinute(150), function () use($auth){
+                return  Models\User::with('user_level')->findOrFail($auth->id);
+            });
             $status = true;
         } catch (\Throwable $e) {
             $code = $e->getCode();
@@ -146,9 +149,15 @@ class UserService
         try {
             if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
                 $user = Auth::user();
-                $getUser = Models\User::with('user_level')->findOrFail($user->id);
-                $result['token'] = $this->createToken($user);
-                $result['user'] = $getUser;
+
+                $result = Cache::remember("user_{$user->name}_data", now()->addMinute(150), function () use($user){
+                    $getUser =  Models\User::with('user_level')->findOrFail($user->id);
+                    $result['token'] = $this->createToken($user);
+                    $result['user'] = $getUser;
+
+                    return $result;
+                });
+
                 $message = 'Succesfully User Login';
                 $status = true;
             } else {
@@ -181,6 +190,7 @@ class UserService
             $message = "Logout Successfully";
             $user = Auth::user();
             $result = $this->deleteToken($user);
+            Cache::forget("user_{$user->name}_data");
             $status = true;
         } catch (\Throwable $e) {
             $code = $e->getCode();
@@ -286,7 +296,7 @@ class UserService
                     break;
                 case 'pelayan':
                     $message = ' Pelayan';
-                    Notification::send($user, new Notifications\OwnerSendEmail($user, ['message' => $message, 'url' => $url]));
+                    // Notification::send($user, new Notifications\OwnerSendEmail($user, ['message' => $message, 'url' => $url]));
                     break;
                 case 'user':
                     $message = ' User';

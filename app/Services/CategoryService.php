@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Category;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 
@@ -16,13 +17,18 @@ class CategoryService
         $result = null;
         try {
             $message = "Get data Category";
+            $cacheName = "category_{$ket}";
             switch ($ket) {
                 case 'uuid':
-                    $result = Category::where('uuid', $id)->first();
+                    $result =  Cache::remember($cacheName, now()->addMinute(150), function () use($id){
+                        return Category::where('uuid', $id)->first();
+                    });
                     break;
 
                 default:
-                    $result = Category::findOrFail($id);
+                    $result =  Cache::remember($cacheName, now()->addMinute(150), function () use($id){
+                        return Category::findOrFail($id);
+                    });
                     break;
             }
 

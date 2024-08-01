@@ -31,11 +31,19 @@ return [
     |
     */
 
+    // 'stores' => [
+
+    //     'array' => [
+    //         'driver' => 'array',
+    //         'serialize' => false,
+    //     ],
+
     'stores' => [
 
-        'array' => [
-            'driver' => 'array',
-            'serialize' => false,
+        'redis' => [
+            'driver' => 'radis',
+            'connection' => 'default',
+            'tags' => true,
         ],
 
         'database' => [

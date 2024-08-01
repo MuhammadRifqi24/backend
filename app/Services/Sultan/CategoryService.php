@@ -3,6 +3,7 @@
 namespace App\Services\Sultan;
 
 use App\Models;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 
@@ -16,12 +17,18 @@ class CategoryService
         $result = null;
         try {
             $message = "Get data Category";
+            $cacheCafeName = "cafe_{$ket}";
+            $cacheCategoryName = "category_{$ket}";
             switch ($ket) {
                 case 'cafe_id':
-                    $cafeManagement = Models\CafeManagement::select('id', 'user_id', 'cafe_id')->where(['user_id' => $id, 'status' => true])->first();
+                    $cafeManagement =  Cache::tags(['get_list_category'])->remember($cacheCafeName, now()->addMinute(150), function () use ($id){
+                        return Models\CafeManagement::select('id', 'user_id', 'cafe_id')->where(['user_id' => $id, 'status' => true])->first();
+                    });
                     if ($cafeManagement) {
                         $message .= ' by CafeId';
-                        $result = Models\Category::with('cafe')->where('cafe_id', $cafeManagement->cafe_id)->get();
+                        $result = Cache::tags(['get_list_category'])->remember($cacheCategoryName, now()->addMinute(150), function () use ($cafeManagement){
+                            return Models\Category::with('cafe')->where('cafe_id', $cafeManagement->cafe_id)->get();
+                        });
                     } else {
                         $code = 404;
                         $message = 'Data Not Found';
@@ -30,11 +37,15 @@ class CategoryService
                     break;
 
                 case 'uuid':
-                    $result = Models\Category::where('uuid', $id)->first();
+                    $result = Cache::tags(['get_list_category'])->remember($cacheCategoryName, now()->addMinute(150), function () use ($id){
+                        return Models\Category::where('uuid', $id)->first();
+                    });
                     break;
 
                 default:
-                    $result = Models\Category::findOrFail($id);
+                    $result = Cache::tags(['get_list_category'])->remember($cacheCategoryName, now()->addMinute(150), function () use ($id){
+                        return Models\Category::findOrFail($id);
+                    });
                     break;
             }
 
@@ -63,7 +74,9 @@ class CategoryService
         $result = null;
         try {
             $message = "Get All data Category";
-            $result = Models\Category::all();
+            $result = Cache::tags(['get_list_category'])->remember('list_category', now()->addMinute(150), function (){
+                return Models\Category::all();
+            });
 
             $status = true;
         } catch (\Throwable $e) {
@@ -104,6 +117,8 @@ class CategoryService
             $message = "Successfully insert Category";
             $status = true;
             $code = 201;
+
+            Cache::tags('get_list_category')->flush();
             DB::commit();
         } catch (\Throwable $e) {
             DB::rollBack();
@@ -138,6 +153,7 @@ class CategoryService
 
             $message = "Successfully Update Category";
             $status = true;
+            Cache::tags('get_list_category')->flush();
             DB::commit();
         } catch (\Throwable $e) {
             DB::rollBack();
@@ -168,6 +184,7 @@ class CategoryService
             if ($category) {
                 $category->delete();
                 $status = true;
+                Cache::tags('get_list_category')->flush();
                 $message = 'Successfully delete Category';
             } else {
                 $code = 404;

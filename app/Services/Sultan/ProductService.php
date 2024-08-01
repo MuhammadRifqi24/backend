@@ -3,6 +3,8 @@
 namespace App\Services\Sultan;
 
 use App\Models;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use App\Services\StockService;
@@ -17,12 +19,18 @@ class ProductService
         try {
             $message = "Get data Product";
             $status = true;
+            $cacheProductName = "order_{$id}_{$ket}";
+            $cacheCafeName = "cafe_management_product_{$id}";
             switch ($ket) {
                 case 'cafe_id':
-                    $cafeManagement = Models\CafeManagement::select('id', 'user_id', 'cafe_id')->where(['user_id' => $id, 'status' => true])->first();
+                    $cafeManagement = Cache::tags(['get_list_product'])->remember($cacheCafeName, now()->addMinute(150), function () use($id){
+                        return  Models\CafeManagement::select('id', 'user_id', 'cafe_id')->where(['user_id' => $id, 'status' => true])->first();
+                    });
                     if ($cafeManagement) {
                         $message .= ' by CafeId';
-                        $result = Models\Product::with('stock', 'category:id,name', 'stan:id,name,logo')->where('cafe_id', $cafeManagement->cafe_id)->get();
+                        $result = Cache::tags(['get_list_product'])->remember($cacheProductName, now()->addMinute(150), function () use($cafeManagement){
+                            return Models\Product::with('stock', 'category:id,name', 'stan:id,name,logo')->where('cafe_id', $cafeManagement->cafe_id)->get();
+                        });
                     } else {
                         $code = 404;
                         $message = 'Data Not Found';
@@ -30,7 +38,9 @@ class ProductService
                     }
                     break;
                 case 'id':
-                    $result = Models\Product::with('stock', 'category:id,name', 'stan:id,name,logo')->where('cafe_id', $id)->get();
+                    $result = Cache::tags(['get_list_product'])->remember($cacheProductName, now()->addMinute(150), function () use($id){
+                        return  Models\Product::with('stock', 'category:id,name', 'stan:id,name,logo')->where('cafe_id', $id)->get();
+                    });
                     if (!$result) {
                         $code = 404;
                         $message = 'Data Not Found';
@@ -38,10 +48,14 @@ class ProductService
                     }
                     break;
                 case 'uuid':
-                    $result = Models\Product::with('stock', 'category:id,name')->where('uuid', $id)->first();
+                    $result = Cache::tags(['get_list_product'])->remember($cacheProductName, now()->addMinute(150), function () use($id){
+                        return  Models\Product::with('stock', 'category:id,name')->where('uuid', $id)->first();
+                    });
                     break;
                 case 'stock':
-                    $result = Models\Product::where(['uuid' => $id, 'is_stock' => true])->first();
+                    $result = Cache::tags(['get_list_product'])->remember($cacheProductName, now()->addMinute(150), function () use($id){
+                        return Models\Product::where(['uuid' => $id, 'is_stock' => true])->first();
+                    });
                     if (!$result) {
                         $code = 404;
                         $message = 'Produk tidak memiliki Stok';
@@ -49,7 +63,9 @@ class ProductService
                     }
                     break;
                 default:
-                    $result = Models\Product::where('uuid', $id)->first();
+                    $result = Cache::tags(['get_list_product'])->remember($cacheProductName, now()->addMinute(150), function () use($id){
+                        return  Models\Product::where('uuid', $id)->first();
+                    });
                     break;
             }
         } catch (\Throwable $e) {
@@ -109,7 +125,7 @@ class ProductService
                     $message = "Error Save Stock";
                 }
             }
-
+            Cache::tags('get_list_product')->flush();
             if ($status === true) DB::commit();
         } catch (\Throwable $e) {
             DB::rollBack();
@@ -149,6 +165,7 @@ class ProductService
             $result = $product;
             $message = "Successfully Update Product";
             $status = true;
+            Cache::tags('get_list_product')->flush();
             DB::commit();
         } catch (\Throwable $e) {
             DB::rollBack();
@@ -185,6 +202,8 @@ class ProductService
                 $status = true;
                 $result = true;
                 $message = 'Successfully delete Product';
+
+                Cache::tags('get_list_product')->flush();
             } else {
                 $code = 404;
                 $message = 'Data tidak ditemukan';

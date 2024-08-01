@@ -3,6 +3,7 @@
 namespace App\Services\Sultan;
 
 use App\Models;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use App\Services\StockService;
@@ -17,12 +18,18 @@ class OrderService
         try {
             $message = "Get data Order";
             $status = true;
+            $cacheOrderName = "order_{$id}_{$ket}";
+            $cacheCafeName = "cafe_management_{$id}";
             switch ($ket) {
                 case 'cafe_id':
-                    $cafeManagement = Models\CafeManagement::select('id', 'user_id', 'cafe_id')->where(['user_id' => $id])->first();
+                    $cafeManagement =  Cache::tags(['get_list_order'])->remember($cacheCafeName, now()->addMinute(150), function () use($id){
+                        return Models\CafeManagement::select('id', 'user_id', 'cafe_id')->where(['user_id' => $id])->first();
+                    });
                     if ($cafeManagement) {
                         $message .= ' by CafeId';
-                        $result = Models\Order::with('table_info', 'user', 'cafe')->where('cafe_id', $cafeManagement->cafe_id)->get();
+                        $result = Cache::tags(['get_list_order'])->remember($cacheOrderName, now()->addMinute(150), function () use($cafeManagement){
+                            return Models\Order::with('table_info', 'user', 'cafe')->where('cafe_id', $cafeManagement->cafe_id)->get();
+                        });
                         if(!$result) {
                             $code = 404;
                             $message = 'Data Not Found';
@@ -35,10 +42,14 @@ class OrderService
                     }
                     break;
                 case 'stan_id':
-                    $cafeManagement = Models\CafeManagement::select('id', 'user_id', 'stan_id')->where(['user_id' => $id])->first();
+                    $cafeManagement = Cache::tags(['get_list_order'])->remember($cacheCafeName, now()->addMinute(150), function () use($id){
+                        return Models\CafeManagement::select('id', 'user_id', 'stan_id')->where(['user_id' => $id])->first();
+                    });
                     if ($cafeManagement) {
                         $message .= ' by StanId';
-                        $result = Models\Order::with('table_info', 'user', 'cafe')->where('stan_id', $cafeManagement->stan_id)->get();
+                        $result = Cache::tags(['get_list_order'])->remember($cacheOrderName, now()->addMinute(150), function () use($cafeManagement){
+                            return Models\Order::with('table_info', 'user', 'cafe')->where('stan_id', $cafeManagement->stan_id)->get();
+                        });
                         if(!$result) {
                             $code = 404;
                             $message = 'Data Not Found';
@@ -51,7 +62,9 @@ class OrderService
                     }
                     break;
                 case 'user_id':
-                    $result = Models\Order::with('table_info', 'user', 'cafe')->where('user_id', $id)->get();
+                    $result = Cache::tags(['get_list_order'])->remember($cacheOrderName, now()->addMinute(150), function () use($id){
+                        return Models\Order::with('table_info', 'user', 'cafe')->where('user_id', $id)->get();
+                    });
                     if(!$result) {
                         $code = 404;
                         $message = 'Data Not Found';
@@ -59,15 +72,19 @@ class OrderService
                     }
                     break;
                 case 'table_info_id':
-                    $cafeManagement = Models\CafeManagement::select('id', 'user_id', 'cafe_id')->where(['user_id' => $id['user_id']])->first();
+                    $cafeManagement = Cache::tags(['get_list_order'])->remember($cacheCafeName, now()->addMinute(150), function () use($id){
+                        return Models\CafeManagement::select('id', 'user_id', 'cafe_id')->where(['user_id' => $id['user_id']])->first();
+                    });
                     if ($cafeManagement) {
                         $message .= ' by CafeId';
-                        $result = Models\Order::with('table_info', 'user', 'cafe')
+                        $result = Cache::tags(['get_list_order'])->remember($cacheOrderName, now()->addMinute(150), function () use($id, $cafeManagement){
+                            return  Models\Order::with('table_info', 'user', 'cafe')
                                 ->where([
                                     'cafe_id' => $cafeManagement->cafe_id,
                                     'table_info_id' => $id['table_info_id']
                                 ])
                                 ->get();
+                        });
                         if(!$result) {
                             $code = 404;
                             $message = 'Data Not Found';
@@ -80,7 +97,9 @@ class OrderService
                     }
                     break;
                 case 'uuid':
-                    $result = Models\Order::with('cafe')->where('uuid', $id)->first();
+                    $result = Cache::tags(['get_list_order'])->remember($cacheOrderName, now()->addMinute(150), function () use($id){
+                        return  Models\Order::with('cafe')->where('uuid', $id)->first();
+                    });
                     if(!$result) {
                         $code = 404;
                         $message = 'Data Not Found';
@@ -88,7 +107,9 @@ class OrderService
                     }
                     break;
                 default:
-                    $result = Models\Order::where('uuid', $id)->first();
+                    $result = Cache::tags(['get_list_order'])->remember($cacheCafeName, now()->addMinute(150), function () use($id){
+                        return Models\Order::where('uuid', $id)->first();
+                    });
                     if(!$result) {
                         $code = 404;
                         $message = 'Data Not Found';
@@ -170,6 +191,7 @@ class OrderService
                 }
             }
 
+            Cache::tags('get_list_order')->flush();
             if ($status === true) DB::commit();
         } catch (\Throwable $e) {
             DB::rollBack();
@@ -206,6 +228,8 @@ class OrderService
             $result = $order;
             $message = "Successfully Update Order";
             $status = true;
+
+            Cache::tags('get_list_order')->flush();
             DB::commit();
         } catch (\Throwable $e) {
             DB::rollBack();
@@ -238,6 +262,7 @@ class OrderService
                 $status = true;
                 $result = true;
                 $message = 'Successfully delete Order';
+                Cache::tags('get_list_order')->flush();
             } else {
                 $code = 404;
                 $message = 'Data tidak ditemukan';
@@ -281,6 +306,7 @@ class OrderService
             $result = $order;
             $message = "Successfully Update Order Status";
             $status = true;
+            Cache::tags('get_list_order')->flush();
 
             DB::commit();
         } catch (\Throwable $e) {
@@ -315,6 +341,7 @@ class OrderService
             $result = $order;
             $message = "Successfully Update Order Payment Status";
             $status = true;
+            Cache::tags('get_list_order')->flush();
             DB::commit();
         } catch (\Throwable $e) {
             DB::rollBack();

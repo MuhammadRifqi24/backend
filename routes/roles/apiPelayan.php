@@ -17,15 +17,15 @@ Route::middleware(['auth:sanctum', 'checkVerifyEmail', 'checkRole:pelayan'])->gr
     Route::post('table/insert', [Pelayan\TableInfoController::class, 'insert']);
     Route::post('table/update', [Pelayan\TableInfoController::class, 'update']);
     Route::post('table/status', [Pelayan\TableInfoController::class, 'updateStatus']);
-    // Route::post('table/book-table', [Pelayan\TableInfoController::class, 'bookTable']);
-    // Route::post('table/finish-table', [Pelayan\TableInfoController::class, 'finishTable']);
+    Route::post('table/book-table', [Pelayan\TableInfoController::class, 'bookTable']);
+    Route::post('table/finish-table', [Pelayan\TableInfoController::class, 'finishTable']);
     Route::delete('table/delete', [Pelayan\TableInfoController::class, 'destroy']);
 
     Route::get('order/index', [Pelayan\OrderController::class, 'index']);
     Route::get('order/view/{uuid}', [Pelayan\OrderController::class, 'getByUUID']);
     Route::post('order/insert', [Pelayan\OrderController::class, 'insert']);
     Route::post('order/status', [Pelayan\OrderController::class, 'updateOrderStatus']);
-    // Route::post('order/cancel', [Pelayan\OrderController::class, 'cancel']);
+    Route::post('order/payment-status', [Pelayan\OrderController::class, 'updatePaymentStatus']);
 
     // Route::get('order/uuid/{uuid}', [Pelayan\OrderController::class, 'getByUUID']);
     // Route::get('order/user/{user_id}', [Pelayan\OrderController::class, 'getByUserId']);
@@ -58,7 +58,7 @@ Route::middleware(['auth:sanctum', 'checkVerifyEmail', 'checkRole:pelayan'])->gr
 
 // Status Payment
 // 0 Pending (Belum dibayar)
-// 1 Finished (SUdah dibayar)
+// 1 Finished (Sudah dibayar)
 
 // Status Call Waiter
 // 0 Pending

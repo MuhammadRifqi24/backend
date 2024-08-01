@@ -14,7 +14,7 @@ class ProductController extends Controller
     protected $productService;
     protected $cafeService;
 
-    public function __construct(Services\Icha\ProductService $productService, Services\CafeService $cafeService)
+    public function __construct(Services\Rifqi\ProductService $productService, Services\CafeService $cafeService)
     {
         $this->productService = $productService;
         $this->cafeService = $cafeService;
